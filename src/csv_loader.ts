@@ -193,3 +193,46 @@ export function validateData(
     errors,
   };
 }
+
+/**
+ * 企業とURLを一度に読み込んで結合
+ */
+export async function loadCompaniesWithUrls(
+  companiesPath: string,
+  urlsPath: string
+): Promise<CompanyWithUrls[]> {
+  const companies = await loadCompanies(companiesPath);
+  const urls = await loadUrls(urlsPath);
+  
+  // データ検証
+  const validation = validateData(companies, urls);
+  if (!validation.valid) {
+    logger.warn('データ検証で警告が見つかりました', validation.errors);
+  }
+  
+  // URLを企業IDでグループ化して優先度順にソート
+  const urlMap = new Map<number, UrlData[]>();
+  for (const url of urls) {
+    if (!urlMap.has(url.company_id)) {
+      urlMap.set(url.company_id, []);
+    }
+    urlMap.get(url.company_id)!.push(url);
+  }
+  
+  // 各企業のURLを優先度順にソート
+  for (const companyUrls of urlMap.values()) {
+    companyUrls.sort((a, b) => a.priority - b.priority);
+  }
+  
+  // 企業とURLを結合
+  const results: CompanyWithUrls[] = [];
+  for (const company of companies) {
+    const companyUrls = urlMap.get(company.id) || [];
+    results.push({
+      company,
+      urls: companyUrls,
+    });
+  }
+  
+  return results;
+}

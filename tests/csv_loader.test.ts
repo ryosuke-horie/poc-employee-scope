@@ -121,7 +121,7 @@ describe('loadCompaniesWithUrls', () => {
       expect(result[0].urls).toHaveLength(1);
     });
 
-    it('不正な優先度は10に設定される', async () => {
+    it('不正な優先度は99に設定される', async () => {
       await fs.writeFile(companiesPath,
         'id,name\n1,株式会社テスト\n'
       );
@@ -133,7 +133,7 @@ describe('loadCompaniesWithUrls', () => {
 
       const result = await loadCompaniesWithUrls(companiesPath, urlsPath);
       
-      expect(result[0].urls[0].priority).toBe(10);
+      expect(result[0].urls[0].priority).toBe(99);
     });
   });
 

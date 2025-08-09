@@ -13,10 +13,10 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 - [ ] 受入: `npm run start -- --help` 出力と `docs/*` の記述が一致（担当: Codex）
 
 ## 1. 取得と抽出の強化
-- [ ] Playwright設定を環境変数化（`REQUEST_TIMEOUT_MS`, `USER_AGENT`, `NAV_WAIT_MS`）（担当: Claude）
-- [ ] 抽出スニペット: マッチ周辺 N 文字とCSS近傍（親要素見出し等）を `raw_text` に格納（担当: Claude）
-- [ ] priority順フォールバックの詳細ログ（どのURLで成功/失敗/理由）（担当: Claude）
-- 受入: ログにURLごとの結果と根拠が残り、デバッグなしでも追跡可能（担当: Codex）
+- [x] Playwright設定を環境変数化（`REQUEST_TIMEOUT_MS`, `USER_AGENT`, `NAV_WAIT_MS`）（担当: Claude）
+- [x] 抽出スニペット: マッチ周辺 N 文字とCSS近傍（親要素見出し等）を `raw_text` に格納（担当: Claude）
+- [x] priority順フォールバックの詳細ログ（どのURLで成功/失敗/理由）（担当: Claude）
+- [x] 受入: ログにURLごとの結果と根拠が残り、デバッグなしでも追跡可能（担当: Codex）
 
 ## 2. 証跡（evidence）の拡充（DBと書き出し）
 - [ ] `src/db.ts` テーブル拡張: `page_title TEXT`, `status_code INTEGER`, `fetched_at TEXT`, `snippet_start INTEGER`, `snippet_end INTEGER`（担当: Claude）

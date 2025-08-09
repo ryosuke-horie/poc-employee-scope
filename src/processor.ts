@@ -93,6 +93,19 @@ URL: ${urlData.url}
 次URL: ${companyUrls[i + 1].url}
 タイプ: ${companyUrls[i + 1].source_type} | 優先度: ${companyUrls[i + 1].priority}
 `);
+        } else if (isLastUrl) {
+          // 最後のURLで失敗した場合もエラーを記録
+          db.insertEvidence({
+            company_id: dbCompany.id!,
+            value: null,
+            raw_text: '',
+            source_url: urlData.url,
+            source_type: 'web',
+            source_date: new Date().toISOString(),
+            score: 0,
+            model: 'none',
+            error_summary: fetchResult.error || 'ページ取得失敗',
+          });
         }
         continue;
       }
@@ -124,6 +137,11 @@ URL: ${urlData.url}
           source_date: new Date().toISOString(),
           score: regexResult.confidence,
           model: 'regex',
+          page_title: fetchResult.title,
+          status_code: fetchResult.statusCode,
+          fetched_at: fetchResult.fetchedAt,
+          snippet_start: regexResult.matchStart,
+          snippet_end: regexResult.matchEnd,
         });
         
         return {
@@ -168,6 +186,9 @@ URL: ${urlData.url}
               source_date: new Date().toISOString(),
               score: llmResult.confidence,
               model: llmResult.model,
+              page_title: fetchResult.title,
+              status_code: fetchResult.statusCode,
+              fetched_at: fetchResult.fetchedAt,
             });
             
             return {
@@ -227,6 +248,7 @@ URL: ${urlData.url}
       source_date: new Date().toISOString(),
       score: 0,
       model: 'none',
+      error_summary: '従業員数を抽出できませんでした',
     });
     
     return {

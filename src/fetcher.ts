@@ -10,6 +10,8 @@ export interface FetchResult {
   title: string;
   success: boolean;
   error?: string;
+  statusCode?: number;
+  fetchedAt?: string;
 }
 
 class PageFetcher {
@@ -134,6 +136,8 @@ class PageFetcher {
         text,
         title,
         success: true,
+        statusCode: status,
+        fetchedAt: new Date().toISOString(),
       };
       
     } catch (error) {

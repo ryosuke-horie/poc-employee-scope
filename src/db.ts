@@ -20,6 +20,12 @@ export interface Evidence {
   score: number;
   model?: string;
   extracted_at?: string;
+  page_title?: string;
+  status_code?: number;
+  fetched_at?: string;
+  snippet_start?: number;
+  snippet_end?: number;
+  error_summary?: string;
 }
 
 class DatabaseManager {
@@ -75,6 +81,12 @@ class DatabaseManager {
         score REAL,
         model TEXT,
         extracted_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        page_title TEXT,
+        status_code INTEGER,
+        fetched_at TEXT,
+        snippet_start INTEGER,
+        snippet_end INTEGER,
+        error_summary TEXT,
         FOREIGN KEY (company_id) REFERENCES companies(id)
       )
     `);
@@ -112,8 +124,10 @@ class DatabaseManager {
       insertEvidence: this.db.prepare(`
         INSERT INTO evidence (
           company_id, value, raw_text, source_url, 
-          source_type, source_date, score, model
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          source_type, source_date, score, model,
+          page_title, status_code, fetched_at, 
+          snippet_start, snippet_end, error_summary
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `),
       selectEvidence: this.db.prepare(
         'SELECT * FROM evidence WHERE company_id = ? ORDER BY extracted_at DESC'
@@ -161,7 +175,13 @@ class DatabaseManager {
       evidence.source_type,
       evidence.source_date,
       evidence.score,
-      evidence.model || null
+      evidence.model || null,
+      evidence.page_title || null,
+      evidence.status_code || null,
+      evidence.fetched_at || null,
+      evidence.snippet_start || null,
+      evidence.snippet_end || null,
+      evidence.error_summary || null
     );
     
     logger.debug('証跡を保存しました', { company_id: evidence.company_id });

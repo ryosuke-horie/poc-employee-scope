@@ -241,6 +241,8 @@ export function extractEmployeeCountByRegex(text: string): RegexExtractionResult
     value: best.value,
     rawText: best.rawText,
     confidence: adjustedConfidence,
+    matchStart: best.matchStart,
+    matchEnd: best.matchEnd,
   };
 }
 

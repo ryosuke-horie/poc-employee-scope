@@ -6,27 +6,20 @@
 - HTMLパース: cheerio
 - LLM API:
   - OpenRouter（モデル例: meta-llama/llama-3.1-8b-instruct）
-  - Ollama（モデル例: llama3.1:8b, qwen2:7b）
-- 検索API（任意）: SerpApi
 - 環境変数管理: dotenv
 
 ## 2. 環境変数
-LLM_PROVIDER=openrouter|ollama
 OPENROUTER_API_KEY=...
 OPENROUTER_MODEL_ID=meta-llama/llama-3.1-8b-instruct
-OLLAMA_MODEL=llama3.1:8b
-SERPAPI_KEY=... # 任意
 
 ## 3. ディレクトリ構成
 
 /src
 index.ts # エントリーポイント
 db.ts # SQLite操作
-serp.ts # SerpApi検索
 fetcher.ts # Playwright取得
 extractor_regex.ts # 正規表現抽出
 extractor_llm_openrouter.ts
-extractor_llm_ollama.ts
 utils.ts
 companies.csv
 .env
@@ -36,7 +29,7 @@ companies.csv
 1. **企業名読み込み**
    - CSV→配列化
 2. **URL収集**
-   - SerpApi利用または事前指定URL
+   - 事前指定URL
 3. **HTML取得**
    - Playwrightで動的レンダリングも対応
 4. **テキスト抽出**
@@ -46,7 +39,7 @@ companies.csv
      - `/従業員数[:：\s]*([\d,]+)\s*名?/i`
      - `/Employees[:：\s]*([\d,]+)/i`
 6. **LLM抽出**
-   - OpenRouterまたはOllama APIにテキスト送信
+   - OpenRouter APIにテキスト送信
    - STRICT JSONで返却
 7. **保存**
    - DBスキーマ例（テーブル名を `evidence` に変更）:
@@ -83,5 +76,4 @@ companies.csv
 
 ## 7. 実行例
 ```bash
-LLM_PROVIDER=openrouter OPENROUTER_API_KEY=sk-xxx npm run start
-LLM_PROVIDER=ollama OLLAMA_MODEL=llama3.1:8b npm run start
+OPENROUTER_API_KEY=sk-xxx npm run start

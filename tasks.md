@@ -13,11 +13,8 @@
 - [x] `dotenv` 読み込みの雛形実装（担当: Claude）
 
 ## フェーズH: 人手セットアップ（手順は `docs/manual/setup.md`）
-- [ ] OpenRouter アカウント作成と API キー取得（担当: ユーザー）
-- [ ] `.env` へ `LLM_PROVIDER=openrouter` と `OPENROUTER_API_KEY` を設定（担当: ユーザー）
-- [ ] Ollama のインストールとモデル取得（例: `ollama pull llama3.1:8b`）（担当: ユーザー、任意）
-- [ ] `.env` へ `LLM_PROVIDER=ollama` と `OLLAMA_MODEL` を設定（担当: ユーザー、任意）
-- [ ] SerpApi キー取得と `.env` への `SERPAPI_KEY` 追加（担当: ユーザー、任意）
+- [x] OpenRouter アカウント作成と API キー取得（担当: ユーザー）
+- [x] `.env` に `OPENROUTER_API_KEY`, `OPENROUTER_MODEL_ID` を設定（担当: ユーザー）
 
 ## フェーズ2: 入出力とDB
 - [ ] CSV入力（企業名リスト）処理 `src/index.ts` 基盤（担当: Claude）
@@ -25,19 +22,18 @@
 - [ ] CSVエクスポート機能（確認用出力）（担当: Claude）
 
 ## フェーズ3: 収集・取得
-- [ ] SerpApi クライアント `src/serp.ts`（任意）と固定URL対応（担当: Claude）
-- [ ] ページ取得 `src/fetcher.ts`（Playwright/requests 併用）（担当: Claude）
+- [ ] 固定URL対応（入力/設定でURLを受け取る）（担当: Claude）
+- [ ] ページ取得 `src/fetcher.ts`（Playwright）（担当: Claude）
 - [ ] 取得リトライ/タイムアウト/ユーザーエージェント設定（担当: Claude）
 
 ## フェーズ4: 抽出
 - [ ] 正規表現抽出 `src/extractor_regex.ts`（日本語/英語パターン）（担当: Claude）
 - [ ] LLM抽出: OpenRouter `src/extractor_llm_openrouter.ts`（STRICT JSON 返却）（担当: Claude）
-- [ ] LLM抽出: Ollama `src/extractor_llm_ollama.ts`（モデル切替）（担当: Claude）
 - [ ] LLM呼出の前処理（テキスト短縮・最大トークン管理）（担当: Claude）
 
 ## フェーズ5: 連携・保存・確認
 - [ ] 出典URL/抜粋の保存（`evidence` テーブル）（担当: Claude）
-- [ ] CLI オプション（入力CSVパス、出力形式、プロバイダ切替）（担当: Claude）
+- [ ] CLI オプション（入力CSVパス、出力形式）（担当: Claude）
 - [ ] 並列処理とキュー制御（40〜50社/時以内目標）（担当: Claude）
 
 ## フェーズ6: エラー処理・コスト最適化
@@ -56,9 +52,5 @@
 
 ### 実行例（参考）
 ```bash
-# OpenRouter を使う例
-LLM_PROVIDER=openrouter OPENROUTER_API_KEY=sk-xxx npm run start -- companies.csv
-
-# Ollama を使う例
-LLM_PROVIDER=ollama OLLAMA_MODEL=llama3.1:8b npm run start -- companies.csv
+OPENROUTER_API_KEY=sk-xxx npm run start -- companies.csv
 ```

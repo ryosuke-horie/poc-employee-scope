@@ -7,11 +7,11 @@
 ## 2. アーキテクチャ
 [companies.csv]
 ↓
-[URL収集: SerpApi or 固定URL]
+[URL収集: 固定URL（手動指定）]
 ↓
-[ページ取得: Playwright/requests]
+[ページ取得: Playwright]
 ↓
-[抽出: regex → LLM(OpenRouter/Ollama)]
+[抽出: regex → LLM(OpenRouter)]
 ↓
 [出典/数値 保存: SQLite/CSV]
 ↓
@@ -47,8 +47,6 @@
 - **出力**: SQLite DB / CSVファイル
 - **API利用**:
   - OpenRouter API（Chat Completions互換）
-  - Ollama API（ローカルREST）
-  - SerpApi（任意）
 
 ## 6. 想定利用手順
 1. `companies.csv`に対象企業を記載

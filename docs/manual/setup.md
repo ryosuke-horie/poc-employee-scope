@@ -1,88 +1,27 @@
-# セットアップ手順
+# セットアップ手順（OpenRouter + Playwright）
 
-## 1. 環境変数の設定
+本PoCは OpenRouter を使用し、URL取得は固定リスト＋Playwrightで行います。以下の手順に従って設定してください。
 
-プロジェクトルートに `.env` ファイルを作成し、必要な環境変数を設定してください。
+## 1. OpenRouter の設定
+1. [OpenRouter](https://openrouter.ai/) にサインアップ
+2. Dashboard → API Keys からキー発行
+3. プロジェクトルートに `.env` を作成し、次を設定:
 
-```bash
-cp .env.example .env
-```
-
-## 2. LLMプロバイダーの選択と設定
-
-### OpenRouter を使用する場合
-
-1. [OpenRouter](https://openrouter.ai/) にアクセスしてアカウントを作成
-2. APIキーを取得
-3. `.env` ファイルに以下を設定:
-
-```env
-LLM_PROVIDER=openrouter
+```ini
 OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxx
 OPENROUTER_MODEL_ID=meta-llama/llama-3.1-8b-instruct
 ```
 
-### Ollama を使用する場合（ローカル実行）
+## 2. 固定URLリストの準備
+- `companies.csv` に企業名を記載し、各企業に対応する候補URLは別途（例: `data/urls.csv`）で管理してください（後続のCLIオプションで指定予定）。
+- Google等の検索APIは使用しません。必要に応じて人手でURLを補完してください。
 
-1. [Ollama](https://ollama.ai/) をインストール:
-   - macOS: `brew install ollama`
-   - その他: 公式サイトからダウンロード
-
-2. モデルをダウンロード:
+## 3. 動作確認（実装後）
 ```bash
-ollama pull llama3.1:8b
-```
-
-3. Ollamaサーバーを起動:
-```bash
-ollama serve
-```
-
-4. `.env` ファイルに以下を設定:
-```env
-LLM_PROVIDER=ollama
-OLLAMA_MODEL=llama3.1:8b
-OLLAMA_BASE_URL=http://localhost:11434
-```
-
-## 3. SerpApi の設定（任意）
-
-検索APIを使用する場合:
-
-1. [SerpApi](https://serpapi.com/) でアカウントを作成
-2. APIキーを取得
-3. `.env` に追加:
-
-```env
-SERPAPI_KEY=xxxxxxxxxxxxxxxxxx
-```
-
-※SerpApiを使用しない場合は、固定URLリストから情報を取得します。
-
-## 4. 動作確認
-
-設定が完了したら、以下のコマンドで動作確認できます:
-
-```bash
-# ビルド
 npm run build
-
-# 実行
-npm run start
+npm start -- companies.csv
 ```
 
 ## トラブルシューティング
-
-### OpenRouter APIキーエラー
-- APIキーが正しく設定されているか確認
-- APIキーの先頭に `sk-or-v1-` が含まれているか確認
-
-### Ollama接続エラー
-- Ollamaサーバーが起動しているか確認: `ollama list`
-- ポート11434が使用可能か確認
-- ファイアウォールの設定を確認
-
-### SerpApiエラー
-- APIキーが正しいか確認
-- 無料プランの場合、月間クエリ数の制限を確認
+- OpenRouter: APIキーが正しいか、レート制限に達していないか確認してください。
 EOF < /dev/null

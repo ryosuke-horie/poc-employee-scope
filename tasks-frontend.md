@@ -38,22 +38,22 @@
 - [ ] 選択企業のハイライトとキーボード移動（↑/↓で次/前へ）
 
 ## TODO（データ I/F）
-- [ ] 入力: `review.json` を読み込み（required: generated_at, companies[], evidence[], review_state[]）
-- [ ] 読み込み経路: `public/review.json` または `GET /api/review`
+- [x] 入力: `review.json` を読み込み（required: generated_at, companies[], evidence[], review_state[]）
+- [x] 読み込み経路: `public/review.json` または `GET /api/review`
 - [ ] 保存経路: JSON ダウンロード または `POST /api/review`（ローカル限定）
 - [ ] バリデーション: `ajv` によるスキーマ検証（エラー可視化）
   
 ### TODO（データマッピング・整合性）
-- [ ] UIモデル←→スキーマのマッピング表を作成（company/evidence/review_state）
+- [x] UIモデル←→スキーマのマッピング表を作成（company/evidence/review_state）
 - [ ] null/未定義の扱いを定義（override_value/note/score等）
 - [ ] evidenceの最新/代表選定ロジック（score降順/時刻/優先source_type）
-- [ ] `decided_at` は保存時にクライアントで付与（ISO 8601）
+- [x] `decided_at` は保存時にクライアントで付与（ISO 8601）
 - [ ] JSONインポート: `<input type="file">` から `review.json` を読み込み可能に（ドラッグ&ドロップ対応）
 
 ## TODO（機能）
 - [ ] 検索/フィルタ/ソート（URLクエリで状態共有）
 - [ ] 編集（decision/override_value/note）と 1 段階の Undo
-- [ ] 保存時に `review_state` を更新し `decided_at` を ISO 8601 付与
+- [x] 保存時に `review_state` を更新し `decided_at` を ISO 8601 付与
 - [ ] エクスポート: レビュー済みのみ CSV（companies + 最終決定）
 - [ ] 差分ハイライト（任意、直前 bundle との比較）
   
@@ -104,10 +104,10 @@
 - [ ] スタイル: Tailwind基調、ダークモード任意（将来）
 
 ## TODO（連携フロー）
-- [ ] CLI: `poc bundle` で `output/review/review.json` 生成
+- [x] CLI: `poc bundle` で `output/review/review.json` 生成
 - [ ] Frontend: `public/review.json` 配置 or `GET /api/review` 実装
 - [ ] UI レビュー→保存（ダウンロード or `POST /api/review`）
-- [ ] CLI: `poc import --review` → `export --final`
+- [ ] CLI: `poc import --review` → `export --final`（importは未実装、export --finalは実装済み）
 
 ## TODO（受入基準）
 - [ ] スキーマ適合（読込時に検証合格）
@@ -140,6 +140,6 @@
 - [ ] レビュー観点（スキーマ遵守/ローカル完結/誤操作防止/性能/可読性）の合意
   
 ### TODO（追補ドキュメント）
-- [ ] UIデータマッピング表（schema→UI）を `docs/frontend/` に追加
-- [ ] CSVエクスポート仕様書（列/型/例）を `docs/frontend/` に追加
+- [x] UIデータマッピング表（schema→UI）: `docs/frontend/ui-data-mapping.md`
+- [x] CSVエクスポート仕様書（列/型/例）: `docs/frontend/csv-export-spec.md`
 - [ ] キーボード操作一覧とアクセシビリティ方針の明文化

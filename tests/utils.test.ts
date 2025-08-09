@@ -31,11 +31,6 @@ describe('sleep', () => {
     // Fake timersを使っているので、実際の時間は経過していない
     expect(true).toBe(true);
   });
-
-  it.skip('0ミリ秒でも動作する（タイマー依存のためスキップ）', async () => {
-    await sleep(0);
-    expect(true).toBe(true);
-  });
 });
 
 describe('truncateText', () => {

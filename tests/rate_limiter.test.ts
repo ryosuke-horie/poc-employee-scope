@@ -23,24 +23,6 @@ describe('RateLimiter', () => {
     expect(stats.max).toBe(3);
   });
 
-  it.skip('制限を超えたリクエストは待機（タイマー依存のためスキップ）', async () => {
-    const limiter = new RateLimiter(2, 1000); // 1秒に2リクエスト
-    
-    // 2回呼び出し（制限内）
-    await limiter.checkLimit();
-    await limiter.checkLimit();
-    
-    // 3回目は待機が必要
-    const checkPromise = limiter.checkLimit();
-    
-    // 時間を進める
-    vi.advanceTimersByTime(1100);
-    
-    await checkPromise;
-    
-    const stats = limiter.getStats();
-    expect(stats.current).toBeLessThanOrEqual(2);
-  });
 
   it('古いリクエスト記録は削除される', async () => {
     const limiter = new RateLimiter(5, 1000);

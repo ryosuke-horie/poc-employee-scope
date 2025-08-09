@@ -37,14 +37,6 @@ describe('extractEmployeeCountByRegex', () => {
       expect(result.value).toBe(10000);
     });
 
-    it.skip('範囲表記から最大値を抽出できる（未実装）', () => {
-      // 範囲表記からの最大値抽出は未実装のためスキップ
-      const text = '従業員数：100～150名';
-      const result = extractEmployeeCountByRegex(text);
-      
-      expect(result.found).toBe(true);
-      expect(result.value).toBe(150);
-    });
   });
 
   describe('英語パターン', () => {
@@ -72,14 +64,6 @@ describe('extractEmployeeCountByRegex', () => {
       expect(result.value).toBe(350);
     });
 
-    it.skip('Headcountを抽出できる（未実装）', () => {
-      // Headcountパターンは未実装のためスキップ
-      const text = 'Current headcount is 2,000';
-      const result = extractEmployeeCountByRegex(text);
-      
-      expect(result.found).toBe(true);
-      expect(result.value).toBe(2000);
-    });
   });
 
   describe('特殊ケース', () => {

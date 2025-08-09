@@ -3,7 +3,7 @@
 本リポジトリの `docs/requirements.md`／`docs/design.md`／`docs/technical_design.md` を基に、実装タスクをチェックリスト化しました。担当は原則として「仕様/進行: Codex」「実装: Claude」です。各タスクは完了時にコミットしてください（1プロンプト=1コミット推奨）。
 
 ## フェーズ0: 初期セットアップ
-- [ ] 仕様確認とタスク分割の承認（担当: Codex）
+- [x] 仕様確認とタスク分割の承認（担当: Codex 完了）
 - [ ] Node.js 18+ とパッケージ管理（npm）準備（担当: Claude）
 - [ ] プロジェクト初期化（`package.json`, `tsconfig.json`, ESLint/Prettier 任意）（担当: Claude）
 

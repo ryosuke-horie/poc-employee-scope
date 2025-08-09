@@ -15,16 +15,22 @@
 ## フェーズH: 人手セットアップ（手順は `docs/manual/setup.md`）
 - [x] OpenRouter アカウント作成と API キー取得（担当: ユーザー）
 - [x] `.env` に `OPENROUTER_API_KEY`, `OPENROUTER_MODEL_ID` を設定（担当: ユーザー）
+ - [ ] サンプルデータの準備（担当: ユーザー、手順: `docs/manual/data_prep.md`）
 
 ## フェーズ2: 入出力とDB
 - [x] CSV入力（企業名リスト）処理 `src/index.ts` 基盤（担当: Claude）
 - [x] SQLite 層 `src/db.ts`（スキーマ・接続・INSERT/SELECT）（担当: Claude）
 - [x] CSVエクスポート機能（確認用出力）（担当: Claude）
+ - [ ] データ読み込み仕様の実装（担当: Claude）
+   - companies: `data/companies.csv`（列: `id`,`name`）
+   - urls: `data/urls.csv`（列: `company_id`,`url`,`source_type`,`priority`）
+   - バリデーション: ヘッダ必須、UTF-8（BOMなし）、`company_id` は `companies.id` に存在
 
 ## フェーズ3: 収集・取得
-- [ ] 固定URL対応（入力/設定でURLを受け取る）（担当: Claude）
-- [ ] ページ取得 `src/fetcher.ts`（Playwright）（担当: Claude）
-- [ ] 取得リトライ/タイムアウト/ユーザーエージェント設定（担当: Claude）
+- [x] 固定URL対応（入力/設定でURLを受け取る）（担当: Claude）
+- [x] ページ取得 `src/fetcher.ts`（Playwright）（担当: Claude）
+- [x] 取得リトライ/タイムアウト/ユーザーエージェント設定（担当: Claude）
+ - [ ] CLI 引数に `--companies data/companies.csv --urls data/urls.csv` を追加（担当: Claude）
 
 ## フェーズ4: 抽出
 - [ ] 正規表現抽出 `src/extractor_regex.ts`（日本語/英語パターン）（担当: Claude）
@@ -52,5 +58,5 @@
 
 ### 実行例（参考）
 ```bash
-OPENROUTER_API_KEY=sk-xxx npm run start -- companies.csv
+OPENROUTER_API_KEY=sk-xxx npm run start -- --companies data/companies.csv --urls data/urls.csv
 ```

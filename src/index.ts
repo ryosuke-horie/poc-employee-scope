@@ -2,9 +2,10 @@
 
 import { config, validateConfig, printConfig } from './config.js';
 import { logger } from './logger.js';
-import { ensureDirectory } from './utils.js';
+import { ensureDirectory, sleep } from './utils.js';
 import { db } from './db.js';
 import { readCompaniesFromCSV, writeResultsToCSV, printResultsSummary, type ExtractionResult } from './csv.js';
+import { fetcher } from './fetcher.js';
 import { join } from 'path';
 
 async function main() {
@@ -28,6 +29,9 @@ async function main() {
     // データベースの初期化
     await db.initialize();
     
+    // Playwrightの初期化
+    await fetcher.initialize();
+    
     // CSVから企業リストを読み込み
     const companies = await readCompaniesFromCSV(inputFile);
     if (companies.length === 0) {
@@ -48,25 +52,58 @@ async function main() {
         // 企業をDBに登録
         const dbCompany = db.upsertCompany(company.company_name);
         
-        // TODO: 以下の処理を実装
-        // 1. URLの取得（company.urlがある場合はそれを使用）
-        // 2. ページの取得（Playwright）
-        // 3. 従業員数の抽出（正規表現→LLM）
-        // 4. 結果をDBに保存
+        // URLの確認
+        if (!company.url) {
+          logger.warn(`URLが指定されていません: ${company.company_name}`);
+          results.push({
+            company_name: company.company_name,
+            employee_count: null,
+            source_url: '',
+            source_text: '',
+            extraction_method: 'failed',
+            confidence_score: 0,
+            extracted_at: new Date().toISOString(),
+            error_message: 'URLが指定されていません',
+          });
+          continue;
+        }
         
-        // 仮の結果を作成（TODO: 実装後に削除）
+        // ページの取得
+        logger.info(`ページ取得中: ${company.url}`);
+        const fetchResult = await fetcher.fetchPage(company.url);
+        
+        if (!fetchResult.success) {
+          logger.error(`ページ取得失敗: ${company.company_name}`, fetchResult.error);
+          results.push({
+            company_name: company.company_name,
+            employee_count: null,
+            source_url: company.url,
+            source_text: '',
+            extraction_method: 'failed',
+            confidence_score: 0,
+            extracted_at: new Date().toISOString(),
+            error_message: fetchResult.error,
+          });
+          continue;
+        }
+        
+        // TODO: 従業員数の抽出（正規表現→LLM）
+        // 現時点ではページ取得のみ
         const result: ExtractionResult = {
           company_name: company.company_name,
           employee_count: null,
-          source_url: company.url || '',
-          source_text: '',
+          source_url: company.url,
+          source_text: fetchResult.text.substring(0, 500), // 最初の500文字を保存
           extraction_method: 'failed',
           confidence_score: 0,
           extracted_at: new Date().toISOString(),
-          error_message: 'Not implemented yet',
+          error_message: 'Extraction not implemented yet',
         };
         
         results.push(result);
+        
+        // 処理間隔を設ける（サーバー負荷軽減）
+        await sleep(1000);
         
         // 証跡をDBに保存
         db.insertEvidence({
@@ -112,6 +149,8 @@ async function main() {
     logger.error('エラーが発生しました', error);
     process.exit(1);
   } finally {
+    // ブラウザを閉じる
+    await fetcher.close();
     // データベース接続を閉じる
     db.close();
   }

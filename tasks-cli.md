@@ -19,10 +19,10 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 - [x] 受入: ログにURLごとの結果と根拠が残り、デバッグなしでも追跡可能（担当: Codex）
 
 ## 2. 証跡（evidence）の拡充（DBと書き出し）
-- [ ] `src/db.ts` テーブル拡張: `page_title TEXT`, `status_code INTEGER`, `fetched_at TEXT`, `snippet_start INTEGER`, `snippet_end INTEGER`（担当: Claude）
-- [ ] `insertEvidence` 引数拡張と保存（担当: Claude）
-- [ ] 失敗時も `source_url` と `error_summary` を保存（担当: Claude）
-- 受入: `db.getAllEvidence()` が新フィールドを含む（担当: Codex）
+- [x] `src/db.ts` テーブル拡張: `page_title TEXT`, `status_code INTEGER`, `fetched_at TEXT`, `snippet_start INTEGER`, `snippet_end INTEGER`（担当: Claude）
+- [x] `insertEvidence` 引数拡張と保存（担当: Claude）
+- [x] 失敗時も `source_url` と `error_summary` を保存（担当: Claude）
+- [x] 受入: `db.getAllEvidence()` が新フィールドを含む（担当: Codex）
 
 ## 3. エクスポート/レビュー用出力
 - [ ] `poc export --format csv` の列定義を固定（既存CSVの列を明示）（担当: Claude）

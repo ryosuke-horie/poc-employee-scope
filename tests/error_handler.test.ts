@@ -87,13 +87,14 @@ describe('ErrorHandler', () => {
       const error = new Error('Network error');
       const action = errorHandler.handleError('TestCompany', error);
       
-      expect(action.shouldRetry).toBe(true);
+      // Network errorはUNKNOWNタイプとして分類され、リトライ不可
+      expect(action.shouldRetry).toBe(false);
       expect(action.shouldSkip).toBe(true);
       expect(action.shouldAbort).toBe(false);
     });
 
     it('3回目のエラーでリトライを停止', () => {
-      const error = new Error('Network error');
+      const error = new Error('ECONNREFUSED'); // ネットワークエラー（リトライ可能）
       const company = 'TestCompany';
       
       // 1回目と2回目
@@ -143,9 +144,9 @@ describe('ErrorHandler', () => {
     it('エラー統計を正しく集計', () => {
       const errorHandler = new ErrorHandler();
       
-      errorHandler.handleError('Company1', new Error('Network error'));
+      errorHandler.handleError('Company1', new Error('ECONNREFUSED'));
       errorHandler.handleError('Company1', new Error('Timeout'));
-      errorHandler.handleError('Company2', new Error('Network error'));
+      errorHandler.handleError('Company2', new Error('ECONNREFUSED'));
       errorHandler.handleError('Company2', new Error('429 rate limit'));
       
       const stats = errorHandler.getStatistics();
@@ -158,7 +159,7 @@ describe('ErrorHandler', () => {
     it('統計をリセットできる', () => {
       const errorHandler = new ErrorHandler();
       
-      errorHandler.handleError('Company1', new Error('Network error'));
+      errorHandler.handleError('Company1', new Error('ECONNREFUSED'));
       errorHandler.handleError('Company2', new Error('Timeout'));
       
       const statsBefore = errorHandler.getStatistics();

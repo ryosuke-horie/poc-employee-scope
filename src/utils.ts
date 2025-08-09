@@ -150,8 +150,8 @@ export function sanitizeUrl(url: string | null | undefined): string {
     
     let result = urlObj.toString();
     
-    // 末尾のスラッシュを削除（パスが/のみの場合を除く）
-    if (result.endsWith('/') && urlObj.pathname !== '/') {
+    // 末尾のスラッシュを削除
+    if (result.endsWith('/')) {
       result = result.slice(0, -1);
     }
     
@@ -184,14 +184,22 @@ export function formatBytes(bytes: number | null | undefined, decimals: number =
   const dm = decimals < 0 ? 0 : decimals;
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   
-  if (bytes < 0) {
-    const absBytes = Math.abs(bytes);
-    const i = Math.floor(Math.log(absBytes) / Math.log(k));
-    return `-${parseFloat((absBytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+  if (bytes === 0) return '0 Bytes';
+  
+  const isNegative = bytes < 0;
+  const absBytes = Math.abs(bytes);
+  
+  if (absBytes < k) {
+    return `${isNegative ? '-' : ''}${absBytes} Bytes`;
   }
   
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  const i = Math.floor(Math.log(absBytes) / Math.log(k));
+  const value = absBytes / Math.pow(k, i);
+  
+  // 整数の場合は小数点なし、そうでない場合は指定桁数
+  const formatted = value % 1 === 0 ? value.toString() : value.toFixed(dm);
+  
+  return `${isNegative ? '-' : ''}${formatted} ${sizes[i]}`;
 }
 
 /**

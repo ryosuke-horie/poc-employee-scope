@@ -2,51 +2,53 @@
 
 CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Playwright取得方針に沿って、人手確認のための証跡を出力できる形に整える。
 
+担当区分の凡例: （担当: Codex）= 要件定義/運用設計/文書化、（担当: Claude）= 実装/テスト、（担当: ユーザー）= 人手オペレーション/承認。
+
 関連ドキュメント: `docs/manual/setup.md`, `docs/manual/data_prep.md`, `docs/manual/source_guidelines.md`, `docs/manual/review_workflow.md`, `docs/schemas/review.schema.json`, `docs/frontend/design.md`
 
 ## 0. 整合性の是正（OpenRouter専用）
-- [ ] `src/config.ts`: `llmProvider`, `ollama*`, `serpApiKey` を除去し、`OPENROUTER_API_KEY`/`OPENROUTER_MODEL_ID` のみに簡素化
-- [ ] `.env.example`: OpenRouter関連のみ残す（キーの書式注記含む）
-- [ ] `printConfig()` 出力から不要項目を削除（SerpApi/Ollama）
-- 受入: `npm run start -- --help` 出力と `docs/*` の記述が一致
+- [ ] `src/config.ts`: `llmProvider`, `ollama*`, `serpApiKey` を除去し、`OPENROUTER_API_KEY`/`OPENROUTER_MODEL_ID` のみに簡素化（担当: Claude）
+- [ ] `.env.example`: OpenRouter関連のみ残す（キーの書式注記含む）（担当: Codex）
+- [ ] `printConfig()` 出力から不要項目を削除（SerpApi/Ollama）（担当: Claude）
+- 受入: `npm run start -- --help` 出力と `docs/*` の記述が一致（担当: Codex）
 
 ## 1. 取得と抽出の強化
-- [ ] Playwright設定を環境変数化（`REQUEST_TIMEOUT_MS`, `USER_AGENT`, `NAV_WAIT_MS`）
-- [ ] 抽出スニペット: マッチ周辺 N 文字とCSS近傍（親要素見出し等）を `raw_text` に格納
-- [ ] priority順フォールバックの詳細ログ（どのURLで成功/失敗/理由）
-- 受入: ログにURLごとの結果と根拠が残り、デバッグなしでも追跡可能
+- [ ] Playwright設定を環境変数化（`REQUEST_TIMEOUT_MS`, `USER_AGENT`, `NAV_WAIT_MS`）（担当: Claude）
+- [ ] 抽出スニペット: マッチ周辺 N 文字とCSS近傍（親要素見出し等）を `raw_text` に格納（担当: Claude）
+- [ ] priority順フォールバックの詳細ログ（どのURLで成功/失敗/理由）（担当: Claude）
+- 受入: ログにURLごとの結果と根拠が残り、デバッグなしでも追跡可能（担当: Codex）
 
 ## 2. 証跡（evidence）の拡充（DBと書き出し）
-- [ ] `src/db.ts` テーブル拡張: `page_title TEXT`, `status_code INTEGER`, `fetched_at TEXT`, `snippet_start INTEGER`, `snippet_end INTEGER`
-- [ ] `insertEvidence` 引数拡張と保存
-- [ ] 失敗時も `source_url` と `error_summary` を保存
-- 受入: `db.getAllEvidence()` が新フィールドを含む
+- [ ] `src/db.ts` テーブル拡張: `page_title TEXT`, `status_code INTEGER`, `fetched_at TEXT`, `snippet_start INTEGER`, `snippet_end INTEGER`（担当: Claude）
+- [ ] `insertEvidence` 引数拡張と保存（担当: Claude）
+- [ ] 失敗時も `source_url` と `error_summary` を保存（担当: Claude）
+- 受入: `db.getAllEvidence()` が新フィールドを含む（担当: Codex）
 
 ## 3. エクスポート/レビュー用出力
-- [ ] `poc export --format csv` の列定義を固定（既存CSVの列を明示）
-- [ ] `poc export --format json`（frontend向け）を追加: `docs/schemas/review.schema.json` 準拠で `review.json` を生成
-- [ ] `poc bundle --out output/review/` で `review.json` + 最小UIシェルを配置（静的HTMLを置くだけで良い）
-- [ ] 連携: `frontend/` が存在する場合は `output/review/review.json` を `frontend/public/review.json` にコピーするオプションを用意
-- 受入: JSONがスキーマで検証でき、`output/review/review.json` が生成される
+- [ ] `poc export --format csv` の列定義を固定（既存CSVの列を明示）（担当: Claude）
+- [ ] `poc export --format json`（frontend向け）を追加: `docs/schemas/review.schema.json` 準拠で `review.json` を生成（担当: Claude）
+- [ ] `poc bundle --out output/review/` で `review.json` + 最小UIシェルを配置（担当: Claude）
+- [ ] 連携: `frontend/` が存在する場合は `output/review/review.json` を `frontend/public/review.json` にコピーするオプションを用意（担当: Claude）
+- 受入: JSONがスキーマで検証でき、`output/review/review.json` が生成される（担当: Codex）
 
 ## 4. レビュー状態の管理
-- [ ] `review_state` テーブル新設: `company_id, decision(ok|ng|unknown), decided_at, note, override_value`
-- [ ] `poc import --review path/to/review.json` で人手判定を反映
-- [ ] `poc export --final csv` で最終値（override優先→evidence最良）を出力
-- 受入: 反映→最終出力までの往復が可能
+- [ ] `review_state` テーブル新設: `company_id, decision(ok|ng|unknown), decided_at, note, override_value`（担当: Claude）
+- [ ] `poc import --review path/to/review.json` で人手判定を反映（担当: Claude）
+- [ ] `poc export --final csv` で最終値（override優先→evidence最良）を出力（担当: Claude）
+- 受入: 反映→最終出力までの往復が可能（担当: Codex）
 
 ## 5. 運用補助
-- [ ] `data/urls.csv` の静的検証コマンド（重複URL、異常priority、無効ドメイン）
-- [ ] `gemini` 提案結果の整形スクリプト（CSV→source_type/priority 正規化）
-- [ ] ログファイル出力（`output/logs/`）と `LOG_LEVEL` 切替
+- [ ] `data/urls.csv` の静的検証コマンド（重複URL、異常priority、無効ドメイン）（担当: Claude）
+- [ ] `gemini` 提案結果の整形スクリプト（CSV→source_type/priority 正規化）（担当: Claude）
+- [ ] ログファイル出力（`output/logs/`）と `LOG_LEVEL` 切替（担当: Claude）
 
 ## 6. ドキュメント
-- [ ] `docs/manual/review_workflow.md` 作成（CLI→bundle→フロントエンド確認の流れ）
-- [ ] `README` のCLI章更新（使い方例、オプション一覧）
+- [ ] `docs/manual/review_workflow.md` 作成（CLI→bundle→フロントエンド確認の流れ）（担当: Codex）
+- [ ] `README` のCLI章更新（使い方例、オプション一覧）（担当: Codex）
 
 ## 7. Next.js 連携（補足）
-- [ ] `.env` に `REVIEW_JSON_PATH` を設定できるようにし、API Routeから参照可能にする（Next.js側と共有する場合）
-- [ ] バンドル時に `review.json` の生成時刻 `generated_at` を付与（フロントに表示）
+- [ ] `.env` に `REVIEW_JSON_PATH` を設定できるようにし、API Routeから参照可能にする（Next.js側と共有する場合）（担当: Claude）
+- [ ] バンドル時に `review.json` の生成時刻 `generated_at` を付与（フロントに表示）（担当: Claude）
 
 ## 付録: review.json スキーマ（概要）
 - 参照: `docs/schemas/review.schema.json`
@@ -101,4 +103,4 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 - [ ] 一覧/詳細/編集/保存の基本フローがローカルで完結
 - [ ] エクスポートした最終CSVがCLIの `export --final` と一致
 
-備考: フロントエンドの詳細タスクは `tasks-frontend.md` を参照。
+備考: フロントエンドの詳細タスクは `tasks-frontend.md` を参照。（調整/文書: 担当: Codex、実装: 担当: Claude、オペレーション: 担当: ユーザー）

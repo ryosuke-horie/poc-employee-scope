@@ -10,21 +10,21 @@
 - [ ] ペルソナ合意（リサーチ担当、監修者）（担当: Codex）
 
 ## TODO（技術選定）
-- [ ] Next.js 14 App Router + TypeScript + Tailwind（daisyUI 任意）（選定: Codex、セットアップ: Claude）
+- [x] Next.js 14 App Router + TypeScript + Tailwind（daisyUI 任意）（選定: Codex、セットアップ: Claude）
 - [ ] 状態管理（Context または Zustand）（選定: Codex、実装: Claude）
 - [ ] AJV によるスキーマ検証の導入（担当: Claude）
   
 ### TODO（実装ガイド）
-- [ ] ページ構成: `/` 一覧、`/company/[id]` 詳細（担当: Codex）
-- [ ] コンポーネント粒度: EvidenceCard/DecisionControls/Filters/Toolbar（担当: Codex）
+- [x] ページ構成: `/` 一覧、`/company/[id]` 詳細（担当: Codex）
+- [x] コンポーネント粒度: EvidenceCard/DecisionControls/Filters/Toolbar（担当: Codex）
 - [ ] 仮API: `/api/review` GET/POST（ローカル限定・CORS無効）（担当: Claude）
-- [ ] スタイル: Tailwind基調、ダークモード任意（将来）（担当: Claude）
+- [x] スタイル: Tailwind基調、ダークモード任意（将来）（担当: Claude）
 
 ## TODO（ユースケース）
-- [ ] 企業単位の一括確認と判定（OK/NG/不明、上書き値、メモ）（担当: Codex）
-- [ ] 信頼度や種別での絞り込み（score、source_type）（担当: Codex）
+- [x] 企業単位の一括確認と判定（OK/NG/不明、上書き値、メモ）（担当: Codex）
+- [x] 信頼度や種別での絞り込み（score、source_type）（担当: Codex）
 - [ ] 未判定/エラーの抽出による効率化（担当: Codex）
-- [ ] レビュー進捗（完了件数・未保存件数）の可視化（担当: Codex）
+- [x] レビュー進捗（完了件数・未保存件数）の可視化（担当: Codex）
 
 ## TODO（画面/UX）
 - [ ] 一覧: 企業別サマリと現在の決定を表示（仕様: Codex、実装: Claude）
@@ -115,9 +115,9 @@
 - [ ] JSON手動インポート→一覧/詳細に即時反映（AJV合格）（担当: Codex）
 
 ## TODO（マイルストーン）
-- [ ] M1: 静的読込 + 一覧/詳細表示 + JSON ダウンロード保存（担当: Codex）
-- [ ] M2: 検索/フィルタ/ソート + スキーマ検証 + 未保存ガード（担当: Codex）
-- [ ] M3: API 入出力（ローカル）+ CSV エクスポート（担当: Codex）
+- [ ] M1: 静的読込 + 一覧/詳細表示 + JSON ダウンロード保存（担当: Codex） [#23](https://github.com/ryosuke-horie/poc-employee-scope/issues/23)
+- [ ] M2: 検索/フィルタ/ソート + スキーマ検証 + 未保存ガード（担当: Codex） [#24](https://github.com/ryosuke-horie/poc-employee-scope/issues/24)
+- [ ] M3: API 入出力（ローカル）+ CSV エクスポート（担当: Codex） [#25](https://github.com/ryosuke-horie/poc-employee-scope/issues/25)
 - [ ] M4: 使い勝手調整（ショートカット/差分/パフォーマンス）（担当: Codex）
   
 ### TODO（成果物の明確化）

@@ -9,6 +9,17 @@
 - [ ] 非スコープ明確化（公開・認証・多人数編集・非ローカル保存等）（担当: Codex）
 - [ ] ペルソナ合意（リサーチ担当、監修者）（担当: Codex）
 
+## TODO（技術選定）
+- [ ] Next.js 14 App Router + TypeScript + Tailwind（daisyUI 任意）（選定: Codex、セットアップ: Claude）
+- [ ] 状態管理（Context または Zustand）（選定: Codex、実装: Claude）
+- [ ] AJV によるスキーマ検証の導入（担当: Claude）
+  
+### TODO（実装ガイド）
+- [ ] ページ構成: `/` 一覧、`/company/[id]` 詳細（担当: Codex）
+- [ ] コンポーネント粒度: EvidenceCard/DecisionControls/Filters/Toolbar（担当: Codex）
+- [ ] 仮API: `/api/review` GET/POST（ローカル限定・CORS無効）（担当: Claude）
+- [ ] スタイル: Tailwind基調、ダークモード任意（将来）（担当: Claude）
+
 ## TODO（ユースケース）
 - [ ] 企業単位の一括確認と判定（OK/NG/不明、上書き値、メモ）（担当: Codex）
 - [ ] 信頼度や種別での絞り込み（score、source_type）（担当: Codex）
@@ -82,16 +93,7 @@
 - [ ] JSON解析失敗/文字化け: ファイル情報と再読込導線（担当: Codex）
 - [ ] 例外ハンドラ（Error Boundary）でUI崩壊を防止（担当: Claude）
 
-## TODO（技術選定）
-- [ ] Next.js 14 App Router + TypeScript + Tailwind（daisyUI 任意）（選定: Codex、セットアップ: Claude）
-- [ ] 状態管理（Context または Zustand）（選定: Codex、実装: Claude）
-- [ ] AJV によるスキーマ検証の導入（担当: Claude）
-  
-### TODO（実装ガイド）
-- [ ] ページ構成: `/` 一覧、`/company/[id]` 詳細（担当: Codex）
-- [ ] コンポーネント粒度: EvidenceCard/DecisionControls/Filters/Toolbar（担当: Codex）
-- [ ] 仮API: `/api/review` GET/POST（ローカル限定・CORS無効）（担当: Claude）
-- [ ] スタイル: Tailwind基調、ダークモード任意（将来）（担当: Claude）
+
 
 ## TODO（連携フロー）
 - [x] CLI: `poc bundle` で `output/review/review.json` 生成（担当: Codex）

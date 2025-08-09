@@ -1,0 +1,343 @@
+{
+  "generated_at": "2025-08-09T22:45:15.050Z",
+  "companies": [
+    {
+      "id": 1,
+      "name": "トヨタ自動車"
+    },
+    {
+      "id": 2,
+      "name": "ソニーグループ"
+    },
+    {
+      "id": 3,
+      "name": "任天堂"
+    },
+    {
+      "id": 4,
+      "name": "ソフトバンクグループ"
+    },
+    {
+      "id": 5,
+      "name": "パナソニック"
+    },
+    {
+      "id": 11,
+      "name": "sincereed株式会社"
+    },
+    {
+      "id": 12,
+      "name": "マミヤITソリューションズ株式会社"
+    },
+    {
+      "id": 19,
+      "name": "テスト企業"
+    },
+    {
+      "id": 20,
+      "name": "失敗企業"
+    },
+    {
+      "id": 21,
+      "name": "テスト企業2"
+    }
+  ],
+  "evidence": [
+    {
+      "company_id": 1,
+      "value": null,
+      "raw_text": "TOYOTA 企業情報 ニュースルーム モビリティ サステナビリティ 投資家情報 採用情報 SEARCH 画像・動画DL 商品 EN 会社案内 企業情報 会社概要 会社名 トヨタ自動車株式会社（TOYOTA MOTOR CORPORATION） 代表取締役社長 佐藤 恒治 創立 1937年（昭和12年）8月28日 資本金（2025年3月末現在） 6,354億円 株主 株主構成はこちらをご覧ください。 主な事業内容 自動車の生産・販売 従業員数（2025年3月末現在） 71,515人（連結 383,853人） 所在地 本社 住所 〒471-8571 愛知県豊田市トヨタ町1番地 代表番号 0565-28-2121 メディア・報道関係者からのお問い合わせはフォームにて受け付けております アクセス 本社地区 名古屋駅（JR線）→岡崎駅→愛知環状鉄道経由 三河豊田駅下車 徒歩（約15分～20分） 名古屋駅（地下鉄東山線）→伏見駅（地下鉄鶴舞線・名鉄豊田線）→豊田市駅／新豊田駅（愛知環状鉄道）→三河豊田駅下車 徒歩（約15分～20分） 名古屋駅（地下鉄東山線）→伏見駅（地下鉄鶴舞線、名鉄豊田線）→",
+      "source_url": "https://global.toyota/jp/company/profile/overview/",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": null,
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 03:43:26"
+    },
+    {
+      "company_id": 1,
+      "value": null,
+      "raw_text": "",
+      "source_url": "https://global.toyota/jp/company/profile/overview/",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": null,
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 03:40:17"
+    },
+    {
+      "company_id": 2,
+      "value": null,
+      "raw_text": "事業・製品情報 開く ソニーグループについて 開く テクノロジー 開く サステナビリティ 開く デザイン 開く 人材・採用情報 開く 投資家情報 開く お問い合わせ 検索 ホーム ソニーグループについて JP EN ソニーグループについて メニュー ソニーグループについて トップ Sony's Purpose & Values CEOメッセージ ニュースリリース ソニーコーポレートブログ ブランド 歴史沿革 会社概要 関連会社一覧 ソニーグループについて メニュー ソニーグループについて トップ Sony's Purpose & Values CEOメッセージ ニュースリリース ソニーコーポレートブログ ブランド 歴史沿革 会社概要 関連会社一覧 Sony's Purpose クリエイティビティとテクノロジーの力で、 世界を感動で満たす。 詳しく見る CEOメッセージ 会社概要 ニュースリリース 歴史沿革 人材 関連会社一覧 ソニーコーポレートブログ 調達活動 Creative Entertainment Vision 関連リンク 事業紹介 新しい取り組み 統合報告書 Corporat",
+      "source_url": "https://www.sony.com/ja/SonyInfo/CorporateInfo/",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": null,
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 03:43:30"
+    },
+    {
+      "company_id": 2,
+      "value": null,
+      "raw_text": "",
+      "source_url": "https://www.sony.com/ja/SonyInfo/CorporateInfo/",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": null,
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 03:40:17"
+    },
+    {
+      "company_id": 3,
+      "value": null,
+      "raw_text": "Nintendo 会社情報 株主・投資家向け情報 CSR情報 採用情報 ニュースリリース さがす 会社情報 会社概要 役員一覧 会社の沿革 事業所案内 マルチステークホルダー方針 株主・投資家向け情報 経営方針 決算発表・IRイベント 業績・財務情報 株式情報 IRライブラリー CSR情報 お客様 サプライチェーン 社員 環境 ガバナンス・ コンプライアンス データ集 社長メッセージ 採用情報 新卒採用 キャリア採用 プロジェクト採用 障がい者採用 関連会社採用 仕事を読み解くキーワード 社長メッセージ 任天堂の人材に対する考え方 さがす 会社情報TOP > 会社概要 商 号 任天堂株式会社 （英語名 Nintendo Co., Ltd.） 事業内容 家庭用レジャー機器の製造・販売 創 業 明治22年9月 設 立 昭和22年11月 資本金 10,065,400,000円 本 社 京都市南区上鳥羽鉾立町11-1 代表者 代表取締役社長 古川 俊太郎 代表取締役 フェロー 宮本 茂 主な関係会社 ニンテンドーシステムズ株式会社 任天堂販売株式会社 ニンテンドーキューブ株式会社 マリオクラブ",
+      "source_url": "https://www.nintendo.co.jp/corporate/outline/index.html",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": null,
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 03:43:34"
+    },
+    {
+      "company_id": 3,
+      "value": null,
+      "raw_text": "",
+      "source_url": "https://www.nintendo.co.jp/corporate/outline/index.html",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": null,
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 03:40:17"
+    },
+    {
+      "company_id": 4,
+      "value": null,
+      "raw_text": "",
+      "source_url": "https://group.softbank/about/corporate_profile",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": null,
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 03:40:17"
+    },
+    {
+      "company_id": 5,
+      "value": null,
+      "raw_text": "",
+      "source_url": "https://holdings.panasonic/jp/corporate/about.html",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": null,
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 03:40:17"
+    },
+    {
+      "company_id": 11,
+      "value": 105,
+      "raw_text": "会社紹介資料 カジュアル面談はこちら open_in_new 募集職種一覧 open_in_new 社員インタビュー COMPANY 会社概要 社名 sincereed（シンシアード）株式会社 所在地 東京オフィス 〒105-0003 東京都港区西新橋2丁目11番13号 CIRCLES新橋7F 関西オフィス 〒530-000",
+      "source_url": "https://sincereed.com/",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": 0.7,
+      "model": "regex",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 04:05:31"
+    },
+    {
+      "company_id": 11,
+      "value": 105,
+      "raw_text": "会社紹介資料 カジュアル面談はこちら open_in_new 募集職種一覧 open_in_new 社員インタビュー COMPANY 会社概要 社名 sincereed（シンシアード）株式会社 所在地 東京オフィス 〒105-0003 東京都港区西新橋2丁目11番13号 CIRCLES新橋7F 関西オフィス 〒530-000",
+      "source_url": "https://sincereed.com/",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": 0.7,
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 03:56:23"
+    },
+    {
+      "company_id": 11,
+      "value": null,
+      "raw_text": "sincereed株式会社 読み込まれました menu TOP ABOUT US SERVICE MEMBER COMPANY RECRUIT filter_none CONTACT keyboard_arrow_right ABOUT US arrow_forward ABOUT US SERVICE 事業内容 大手・成長企業の求人に特化した、 エージェント向け求人データベースです。 サービスサイトへ 採用企業様はこちら keyboard_arrow_right サービスサイト arrow_forward サービスサイト 大手・成長企業の求人に特化した、 エージェント向け求人データベースです。 サービスサイトへ arrow_forward サービスサイト keyboard_arrow_right サービスサイト sincereed Agent 大手人気企業への支援に強みを持つエージェントです。 DX領域をはじめ、マーケティング、営業、管理部門などで 豊富な 転職支援実績がございます。 専門的な知識と採用責任者との強いコネクションで、 高い実績と 信頼を得ています。 サービスサイトへ ",
+      "source_url": "https://sincereed.com/",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": null,
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 03:50:24"
+    },
+    {
+      "company_id": 12,
+      "value": null,
+      "raw_text": "",
+      "source_url": "https://www.mamiya-its.co.jp/",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": null,
+      "model": "none",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 04:05:41"
+    },
+    {
+      "company_id": 12,
+      "value": null,
+      "raw_text": "ABOUT US COMPANY SERVICE WORKS RECRUIT CONTACT Scroll お知らせ 2025/04/21 ゴールデンウイーク休業のお知らせ ABOUT US私たちについて 私たちの創設以来変わることのないVision・Mission・Valueについてご紹介します。 もっと見る SERVICE事業内容 マミヤITソリューションズ株式会社は、「システムインテグレーション」「システム運用管理」「WEB事業」「Iot事業」の４事業を柱として、確かな技術と品質をお届けします。 詳細はこちら システムインテグレーション 詳細はこちら システム運用管理 詳細はこちら WEB事業 詳細はこちら IOT事業 開発実績はこちら RECRUIT採用情報 私たちは、ユーザーに永く愛され続けるサービスの提供していくことを目標に、日々開発に取り組んでいます。 世界につながる未来を私たちと一緒に創造しませんか。 もっと見る TOP TOPトップページ ABOUT US私たちについて COMPANY会社情報 SERVICE事業内容 WORKS開発実績 RECRUIT採用情報 CON",
+      "source_url": "https://www.mamiya-its.co.jp/",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": null,
+      "score": null,
+      "model": "meta-llama/llama-3.1-8b-instruct",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 03:56:29"
+    },
+    {
+      "company_id": 19,
+      "value": 1000,
+      "raw_text": "従業員数: 1000人",
+      "source_url": "https://example.com",
+      "source_type": "web",
+      "page_title": "テスト企業 - 会社概要",
+      "status_code": 200,
+      "score": 0.95,
+      "model": "regex",
+      "snippet_start": 100,
+      "snippet_end": 200,
+      "extracted_at": "2025-08-09 05:02:33"
+    },
+    {
+      "company_id": 20,
+      "value": null,
+      "raw_text": "",
+      "source_url": "https://error.example.com",
+      "source_type": "web",
+      "page_title": null,
+      "status_code": 404,
+      "score": null,
+      "model": "none",
+      "snippet_start": null,
+      "snippet_end": null,
+      "extracted_at": "2025-08-09 05:02:33"
+    },
+    {
+      "company_id": 21,
+      "value": 500,
+      "raw_text": "スタッフ数: 500名",
+      "source_url": "https://example2.com",
+      "source_type": "web",
+      "page_title": "企業情報",
+      "status_code": 200,
+      "score": 0.85,
+      "model": "regex",
+      "snippet_start": 50,
+      "snippet_end": 150,
+      "extracted_at": "2025-08-09 05:02:33"
+    }
+  ],
+  "review_state": [
+    {
+      "company_id": 1,
+      "decision": "unknown",
+      "override_value": null,
+      "note": null,
+      "decided_at": null
+    },
+    {
+      "company_id": 2,
+      "decision": "unknown",
+      "override_value": null,
+      "note": null,
+      "decided_at": null
+    },
+    {
+      "company_id": 3,
+      "decision": "unknown",
+      "override_value": null,
+      "note": null,
+      "decided_at": null
+    },
+    {
+      "company_id": 4,
+      "decision": "unknown",
+      "override_value": null,
+      "note": null,
+      "decided_at": null
+    },
+    {
+      "company_id": 5,
+      "decision": "unknown",
+      "override_value": null,
+      "note": null,
+      "decided_at": null
+    },
+    {
+      "company_id": 11,
+      "decision": "unknown",
+      "override_value": null,
+      "note": null,
+      "decided_at": null
+    },
+    {
+      "company_id": 12,
+      "decision": "unknown",
+      "override_value": null,
+      "note": null,
+      "decided_at": null
+    },
+    {
+      "company_id": 19,
+      "decision": "unknown",
+      "override_value": null,
+      "note": null,
+      "decided_at": null
+    },
+    {
+      "company_id": 20,
+      "decision": "unknown",
+      "override_value": null,
+      "note": null,
+      "decided_at": null
+    },
+    {
+      "company_id": 21,
+      "decision": "unknown",
+      "override_value": null,
+      "note": null,
+      "decided_at": null
+    }
+  ]
+}

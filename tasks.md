@@ -8,9 +8,9 @@
 - [x] プロジェクト初期化（`package.json`, `tsconfig.json`, ESLint/Prettier 任意）（担当: Claude）
 
 ## フェーズ1: ディレクトリ/環境構築
-- [ ] ディレクトリ作成: `src/`, `tests/`（担当: Claude）
-- [ ] 環境変数定義と`.env.example`作成（担当: Codex）
-- [ ] `dotenv` 読み込みの雛形実装（担当: Claude）
+- [x] ディレクトリ作成: `src/`, `tests/`（担当: Claude）
+- [x] 環境変数定義と`.env.example`作成（担当: Codex）
+- [x] `dotenv` 読み込みの雛形実装（担当: Claude）
 
 ## フェーズH: 人手セットアップ（手順は `docs/manual/setup.md`）
 - [ ] OpenRouter アカウント作成と API キー取得（担当: ユーザー）

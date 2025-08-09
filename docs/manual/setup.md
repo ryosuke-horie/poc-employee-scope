@@ -1,61 +1,88 @@
-# 人手セットアップ手順（LLM/検索API）
+# セットアップ手順
 
-本PoCを動かすための人手作業をまとめた手順書です。実施後は `.env` を保存し、機密情報は共有しないでください。
+## 1. 環境変数の設定
 
-## 1. OpenRouter（クラウドLLM）
-- アカウント作成: https://openrouter.ai/
-- APIキー発行: Dashboard → API Keys → 新規発行
-- `.env` へ追記:
-  ```ini
-  LLM_PROVIDER=openrouter
-  OPENROUTER_API_KEY=sk-... # あなたのキー
-  OPENROUTER_MODEL_ID=meta-llama/llama-3.1-8b-instruct
-  ```
-- 備考: 利用料金/レートを確認。社外送信を避ける場合は Ollama を選択。
+プロジェクトルートに `.env` ファイルを作成し、必要な環境変数を設定してください。
 
-## 2. Ollama（ローカルLLM）
-- インストール: https://ollama.com/ から OS に合わせて導入
-- モデル取得（例）:
-  ```bash
-  ollama pull llama3.1:8b
-  # 代替: ollama pull qwen2:7b
-  ```
-- `.env` へ追記:
-  ```ini
-  LLM_PROVIDER=ollama
-  OLLAMA_MODEL=llama3.1:8b
-  ```
-- 備考: オフライン動作可。初回ダウンロードに時間/容量が必要。
+```bash
+cp .env.example .env
+```
 
-## 3. SerpApi（任意・検索API）
-- アカウント作成: https://serpapi.com/
-- APIキー取得後、`.env` へ追記:
-  ```ini
-  SERPAPI_KEY=your-serpapi-key
-  ```
-- 備考: 無料枠/制限を確認。未使用の場合は固定URL運用で代替。
+## 2. LLMプロバイダーの選択と設定
 
-## 4. .env の管理
-- 例（`.env.example` にも反映予定）:
-  ```ini
-  # いずれかを選択
-  LLM_PROVIDER=openrouter
-  OPENROUTER_API_KEY=sk-...
-  OPENROUTER_MODEL_ID=meta-llama/llama-3.1-8b-instruct
-  
-  # または
-  # LLM_PROVIDER=ollama
-  # OLLAMA_MODEL=llama3.1:8b
-  
-  # 任意
-  SERPAPI_KEY=...
-  ```
-- `.env` はコミット禁止。必要なら開発メンバーに個別配布。
+### OpenRouter を使用する場合
 
-## 5. 動作確認（後日実装後に実施）
-- 実装完了後、以下を実行予定:
-  ```bash
-  npm run build
-  npm start -- companies.csv
-  ```
-- 期待値: 従業員数の抽出結果と出典が `SQLite/CSV` に保存される。
+1. [OpenRouter](https://openrouter.ai/) にアクセスしてアカウントを作成
+2. APIキーを取得
+3. `.env` ファイルに以下を設定:
+
+```env
+LLM_PROVIDER=openrouter
+OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxx
+OPENROUTER_MODEL_ID=meta-llama/llama-3.1-8b-instruct
+```
+
+### Ollama を使用する場合（ローカル実行）
+
+1. [Ollama](https://ollama.ai/) をインストール:
+   - macOS: `brew install ollama`
+   - その他: 公式サイトからダウンロード
+
+2. モデルをダウンロード:
+```bash
+ollama pull llama3.1:8b
+```
+
+3. Ollamaサーバーを起動:
+```bash
+ollama serve
+```
+
+4. `.env` ファイルに以下を設定:
+```env
+LLM_PROVIDER=ollama
+OLLAMA_MODEL=llama3.1:8b
+OLLAMA_BASE_URL=http://localhost:11434
+```
+
+## 3. SerpApi の設定（任意）
+
+検索APIを使用する場合:
+
+1. [SerpApi](https://serpapi.com/) でアカウントを作成
+2. APIキーを取得
+3. `.env` に追加:
+
+```env
+SERPAPI_KEY=xxxxxxxxxxxxxxxxxx
+```
+
+※SerpApiを使用しない場合は、固定URLリストから情報を取得します。
+
+## 4. 動作確認
+
+設定が完了したら、以下のコマンドで動作確認できます:
+
+```bash
+# ビルド
+npm run build
+
+# 実行
+npm run start
+```
+
+## トラブルシューティング
+
+### OpenRouter APIキーエラー
+- APIキーが正しく設定されているか確認
+- APIキーの先頭に `sk-or-v1-` が含まれているか確認
+
+### Ollama接続エラー
+- Ollamaサーバーが起動しているか確認: `ollama list`
+- ポート11434が使用可能か確認
+- ファイアウォールの設定を確認
+
+### SerpApiエラー
+- APIキーが正しいか確認
+- 無料プランの場合、月間クエリ数の制限を確認
+EOF < /dev/null

@@ -1,6 +1,6 @@
 # データ準備手順（companies.csv / urls.csv）
 
-Playwrightでの取得対象URLは人手で用意します。以下のCSVをUTF-8（BOMなし）で作成し、Gitで管理します（`.gitignore` で `data/*.csv` は追跡対象）。
+Playwrightでの取得対象URLは人手で用意します。以下のCSVをUTF-8（BOMなし）で作成し、Gitで管理します（`.gitignore` で `data/*.csv` は追跡対象）。URL候補の選定や優先度の付け方は `docs/manual/source_guidelines.md` を参照してください。
 
 ## 1) companies.csv（企業マスター）
 - パス: `data/companies.csv`
@@ -21,7 +21,7 @@ id,name
   - `url`: 取得対象URL（https:// から始まる）
   - `source_type`: official|ir|wiki|news などの区分
   - `priority`: 1が最優先の整数（小さいほど先に取得）
-- 例:
+- 例（1社あたり2〜5件推奨）:
 ```
 company_id,url,source_type,priority
 1,https://www.acme.co.jp/company/profile,official,1

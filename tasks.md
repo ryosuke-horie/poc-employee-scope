@@ -16,6 +16,11 @@
 - [x] OpenRouter アカウント作成と API キー取得（担当: ユーザー）
 - [x] `.env` に `OPENROUTER_API_KEY`, `OPENROUTER_MODEL_ID` を設定（担当: ユーザー）
  - [x] サンプルデータの準備（担当: ユーザー、手順: `docs/manual/data_prep.md` 完了）
+ - [ ] URL候補の収集（各社2〜5件、優先度付け。手順: `docs/manual/source_guidelines.md`）（担当: ユーザー）
+
+## フェーズG: ソース方針/信頼度ルール
+- [ ] URL信頼度の評価基準を策定し文書化（担当: Codex、`docs/manual/source_guidelines.md`）
+- [ ] 優先度と信頼度のマッピング（priority値の決め方）を定義（担当: Codex）
 
 ## フェーズ2: 入出力とDB
 - [x] CSV入力（企業名リスト）処理 `src/index.ts` 基盤（担当: Claude）
@@ -31,6 +36,7 @@
 - [x] ページ取得 `src/fetcher.ts`（Playwright）（担当: Claude）
 - [x] 取得リトライ/タイムアウト/ユーザーエージェント設定（担当: Claude）
  - [x] CLI 引数に `--companies data/companies.csv --urls data/urls.csv` を追加（担当: Claude）
+ - [ ] priorityに基づく取得順制御とフォールバック（担当: Claude）
 
 ## フェーズ4: 抽出
 - [x] 正規表現抽出 `src/extractor_regex.ts`（日本語/英語パターン）（担当: Claude）

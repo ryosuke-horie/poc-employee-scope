@@ -49,13 +49,13 @@ companies.csv
    - OpenRouterまたはOllama APIにテキスト送信
    - STRICT JSONで返却
 7. **保存**
-   - DBスキーマ例（テーブル名を `extractions` に変更）:
+   - DBスキーマ例（テーブル名を `evidence` に変更）:
      ```sql
      CREATE TABLE companies(
        id INTEGER PRIMARY KEY,
        name TEXT UNIQUE
      );
-     CREATE TABLE extractions(
+     CREATE TABLE evidence(
        id INTEGER PRIMARY KEY,
        company_id INTEGER,
        value INTEGER,

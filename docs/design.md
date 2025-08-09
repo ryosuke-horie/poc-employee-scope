@@ -29,7 +29,7 @@
    - 正規表現で抽出
    - 見つからない場合、LLM APIで抽出
 5. **保存モジュール**
-   - SQLiteに保存（`companies`, `extractions` テーブル）
+   - SQLiteに保存（`companies`, `evidence` テーブル）
 6. **確認モジュール**
    - CSVエクスポートまたはSQLiteブラウザで閲覧
 

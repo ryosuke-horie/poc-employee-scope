@@ -10,7 +10,7 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 - [x] `src/config.ts`: `llmProvider`, `ollama*`, `serpApiKey` を除去し、`OPENROUTER_API_KEY`/`OPENROUTER_MODEL_ID` のみに簡素化（担当: Claude）
 - [x] `.env.example`: OpenRouter関連のみ残す（キーの書式注記含む）（担当: Claude）
 - [x] `printConfig()` 出力から不要項目を削除（SerpApi/Ollama）（担当: Claude）
-- 受入: `npm run start -- --help` 出力と `docs/*` の記述が一致（担当: Codex）
+- [ ] 受入: `npm run start -- --help` 出力と `docs/*` の記述が一致（担当: Codex）
 
 ## 1. 取得と抽出の強化
 - [ ] Playwright設定を環境変数化（`REQUEST_TIMEOUT_MS`, `USER_AGENT`, `NAV_WAIT_MS`）（担当: Claude）

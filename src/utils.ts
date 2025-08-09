@@ -134,3 +134,73 @@ export function errorToString(error: unknown): string {
   }
   return JSON.stringify(error);
 }
+
+/**
+ * URLをサニタイズ
+ */
+export function sanitizeUrl(url: string | null | undefined): string {
+  if (!url) return '';
+  
+  try {
+    const trimmed = url.trim();
+    const urlObj = new URL(trimmed);
+    
+    // フラグメントを削除
+    urlObj.hash = '';
+    
+    let result = urlObj.toString();
+    
+    // 末尾のスラッシュを削除（パスが/のみの場合を除く）
+    if (result.endsWith('/') && urlObj.pathname !== '/') {
+      result = result.slice(0, -1);
+    }
+    
+    return result;
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * 安全に整数をパース
+ */
+export function parseIntSafe(value: string | null | undefined, defaultValue: number = 0): number {
+  if (!value) return defaultValue;
+  
+  // カンマを削除
+  const cleaned = value.replace(/,/g, '');
+  const parsed = parseInt(cleaned, 10);
+  
+  return isNaN(parsed) ? defaultValue : parsed;
+}
+
+/**
+ * バイト数をフォーマット
+ */
+export function formatBytes(bytes: number | null | undefined, decimals: number = 2): string {
+  if (!bytes || isNaN(bytes)) return '0 Bytes';
+  
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  
+  if (bytes < 0) {
+    const absBytes = Math.abs(bytes);
+    const i = Math.floor(Math.log(absBytes) / Math.log(k));
+    return `-${parseFloat((absBytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+  }
+  
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+/**
+ * ディレクトリが存在することを確認（作成も行う）
+ */
+export async function ensureDirectoryExists(dirPath: string): Promise<void> {
+  try {
+    await fs.access(dirPath);
+  } catch {
+    await fs.mkdir(dirPath, { recursive: true });
+  }
+}

@@ -2,6 +2,8 @@
 
 目的: 人が証跡を見て「OK/NG/不明」を判断し、根拠リンクと抜粋テキストを確認・編集・保存できるローカルUIを提供する。
 
+技術スタック（提案）: Next.js 14（App Router）+ TypeScript + Tailwind CSS（必要に応じて daisyUI）。
+
 ## 1. 要件定義
 - [ ] 画面一覧（一覧・詳細・検索/フィルタ）とナビゲーションを定義
 - [ ] 最終決定フィールド（decision/override_value/note）の定義
@@ -19,10 +21,11 @@
 - [ ] 差分表示: 変更多発の企業のハイライト
 - [ ] エクスポート: レビュー済みのみCSV出力（companies+最終決定）
 
-## 4. 技術選定
-- [ ] ローカル前提: Vite + React/Preact（またはSvelte）でSPA
-- [ ] 保存方式: 小さなExpressローカルサーバ or ダウンロード→CLI取り込み
-- [ ] UI: 最小限（素のCSS/小規模UIキット）
+## 4. 技術選定（更新）
+- [ ] Next.js 14 App Router（`app/`）+ TypeScript + Tailwind CSS（daisyUI任意）
+- [ ] データ読み込み: `public/review.json`（静的）または API Route `GET /api/review`
+- [ ] 保存方式: JSONダウンロード or API Route `POST /api/review` → ローカルに保存
+- [ ] バリデーション: `ajv` で `docs/schemas/review.schema.json` を検証
 
 ## 5. 連携フロー（人手）
 - [ ] CLI: `poc bundle` 実行→ `output/review/` に review.json + 静的UI を生成
@@ -38,3 +41,14 @@
 - [ ] review.json の読み込みバリデーションが通る（スキーマ準拠）
 - [ ] 一覧/詳細/編集/保存の基本フローがローカルで完結
 - [ ] エクスポートした最終CSVがCLIの `export --final` と一致
+
+## 7. プロジェクト構成（提案）
+- `frontend/`
+  - `app/`
+    - `page.tsx`（一覧）
+    - `company/[id]/page.tsx`（詳細）
+    - `api/review/route.ts`（保存/読込のAPI、任意）
+  - `components/`（EvidenceCard, DecisionControls, Filters など）
+  - `lib/schema.ts`（AJVスキーマ読込と型変換）
+  - `public/review.json`（CLIのbundleを配置して読み込む運用も可）
+  - `tailwind.config.ts` / `postcss.config.js`

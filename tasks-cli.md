@@ -24,6 +24,7 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 - [ ] `poc export --format csv` の列定義を固定（既存CSVの列を明示）
 - [ ] `poc export --format json`（frontend向け）を追加: `docs/schemas/review.schema.json` 準拠で `review.json` を生成
 - [ ] `poc bundle --out output/review/` で `review.json` + 最小UIシェルを配置（静的HTMLを置くだけで良い）
+- [ ] 連携: `frontend/` が存在する場合は `output/review/review.json` を `frontend/public/review.json` にコピーするオプションを用意
 - 受入: JSONがスキーマで検証でき、`output/review/review.json` が生成される
 
 ## 4. レビュー状態の管理
@@ -40,6 +41,10 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 ## 6. ドキュメント
 - [ ] `docs/manual/review_workflow.md` 作成（CLI→bundle→フロントエンド確認の流れ）
 - [ ] `README` のCLI章更新（使い方例、オプション一覧）
+
+## 7. Next.js 連携（補足）
+- [ ] `.env` に `REVIEW_JSON_PATH` を設定できるようにし、API Routeから参照可能にする（Next.js側と共有する場合）
+- [ ] バンドル時に `review.json` の生成時刻 `generated_at` を付与（フロントに表示）
 
 ## 付録: review.json スキーマ（概要）
 - 参照: `docs/schemas/review.schema.json`

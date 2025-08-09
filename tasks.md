@@ -12,6 +12,13 @@
 - [ ] 環境変数定義と`.env.example`作成（担当: Codex）
 - [ ] `dotenv` 読み込みの雛形実装（担当: Claude）
 
+## フェーズH: 人手セットアップ（手順は `docs/manual/setup.md`）
+- [ ] OpenRouter アカウント作成と API キー取得（担当: ユーザー）
+- [ ] `.env` へ `LLM_PROVIDER=openrouter` と `OPENROUTER_API_KEY` を設定（担当: ユーザー）
+- [ ] Ollama のインストールとモデル取得（例: `ollama pull llama3.1:8b`）（担当: ユーザー、任意）
+- [ ] `.env` へ `LLM_PROVIDER=ollama` と `OLLAMA_MODEL` を設定（担当: ユーザー、任意）
+- [ ] SerpApi キー取得と `.env` への `SERPAPI_KEY` 追加（担当: ユーザー、任意）
+
 ## フェーズ2: 入出力とDB
 - [ ] CSV入力（企業名リスト）処理 `src/index.ts` 基盤（担当: Claude）
 - [ ] SQLite 層 `src/db.ts`（スキーマ・接続・INSERT/SELECT）（担当: Claude）
@@ -29,7 +36,7 @@
 - [ ] LLM呼出の前処理（テキスト短縮・最大トークン管理）（担当: Claude）
 
 ## フェーズ5: 連携・保存・確認
-- [ ] 出典URL/抜粋の保存（`candidates` テーブル）（担当: Claude）
+- [ ] 出典URL/抜粋の保存（`extractions` テーブル）（担当: Claude）
 - [ ] CLI オプション（入力CSVパス、出力形式、プロバイダ切替）（担当: Claude）
 - [ ] 並列処理とキュー制御（40〜50社/時以内目標）（担当: Claude）
 

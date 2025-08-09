@@ -36,8 +36,9 @@ coverage/
 
 # Output files
 output/
+# データCSVはGitで管理する
 *.csv
-!companies.csv
+!data/*.csv
 
 # Playwright
 playwright-report/

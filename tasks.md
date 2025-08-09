@@ -21,7 +21,7 @@
 - [x] CSV入力（企業名リスト）処理 `src/index.ts` 基盤（担当: Claude）
 - [x] SQLite 層 `src/db.ts`（スキーマ・接続・INSERT/SELECT）（担当: Claude）
 - [x] CSVエクスポート機能（確認用出力）（担当: Claude）
- - [ ] データ読み込み仕様の実装（担当: Claude）
+ - [x] データ読み込み仕様の実装（担当: Claude）
    - companies: `data/companies.csv`（列: `id`,`name`）
    - urls: `data/urls.csv`（列: `company_id`,`url`,`source_type`,`priority`）
    - バリデーション: ヘッダ必須、UTF-8（BOMなし）、`company_id` は `companies.id` に存在
@@ -30,7 +30,7 @@
 - [x] 固定URL対応（入力/設定でURLを受け取る）（担当: Claude）
 - [x] ページ取得 `src/fetcher.ts`（Playwright）（担当: Claude）
 - [x] 取得リトライ/タイムアウト/ユーザーエージェント設定（担当: Claude）
- - [ ] CLI 引数に `--companies data/companies.csv --urls data/urls.csv` を追加（担当: Claude）
+ - [x] CLI 引数に `--companies data/companies.csv --urls data/urls.csv` を追加（担当: Claude）
 
 ## フェーズ4: 抽出
 - [ ] 正規表現抽出 `src/extractor_regex.ts`（日本語/英語パターン）（担当: Claude）

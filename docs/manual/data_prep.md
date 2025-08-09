@@ -1,6 +1,6 @@
 # データ準備手順（companies.csv / urls.csv）
 
-Playwrightでの取得対象URLは人手で用意します。以下のCSVをUTF-8（BOMなし）で作成してください。
+Playwrightでの取得対象URLは人手で用意します。以下のCSVをUTF-8（BOMなし）で作成し、Gitで管理します（`.gitignore` で `data/*.csv` は追跡対象）。
 
 ## 1) companies.csv（企業マスター）
 - パス: `data/companies.csv`

@@ -15,7 +15,7 @@
 ## フェーズH: 人手セットアップ（手順は `docs/manual/setup.md`）
 - [x] OpenRouter アカウント作成と API キー取得（担当: ユーザー）
 - [x] `.env` に `OPENROUTER_API_KEY`, `OPENROUTER_MODEL_ID` を設定（担当: ユーザー）
- - [ ] サンプルデータの準備（担当: ユーザー、手順: `docs/manual/data_prep.md`）
+ - [x] サンプルデータの準備（担当: ユーザー、手順: `docs/manual/data_prep.md` 完了）
 
 ## フェーズ2: 入出力とDB
 - [x] CSV入力（企業名リスト）処理 `src/index.ts` 基盤（担当: Claude）

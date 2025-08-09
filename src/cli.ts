@@ -4,6 +4,7 @@ export interface CliOptions {
   companiesPath: string;
   urlsPath: string;
   outputPath?: string;
+  parallel?: number;
   help: boolean;
 }
 
@@ -17,6 +18,7 @@ const helpText = `
   --companies <path>  企業リストCSVファイルのパス (デフォルト: data/companies.csv)
   --urls <path>       URLリストCSVファイルのパス (デフォルト: data/urls.csv)
   --output <path>     結果出力先のパス (デフォルト: output/results_[timestamp].csv)
+  --parallel <num>    並列処理数 (デフォルト: 3)
   --help              ヘルプを表示
 
 例:
@@ -44,6 +46,9 @@ export function parseCliArgs(): CliOptions {
         output: {
           type: 'string',
         },
+        parallel: {
+          type: 'string',
+        },
         help: {
           type: 'boolean',
           default: false,
@@ -61,6 +66,7 @@ export function parseCliArgs(): CliOptions {
       companiesPath: values.companies as string,
       urlsPath: values.urls as string,
       outputPath: values.output as string | undefined,
+      parallel: values.parallel ? parseInt(values.parallel as string, 10) : undefined,
       help: false,
     };
     

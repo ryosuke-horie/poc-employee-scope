@@ -2,14 +2,13 @@
 
 import { config, validateConfig, printConfig } from './config.js';
 import { logger } from './logger.js';
-import { ensureDirectory, sleep } from './utils.js';
+import { ensureDirectory } from './utils.js';
 import { db } from './db.js';
-import { writeResultsToCSV, printResultsSummary, type ExtractionResult } from './csv.js';
+import { writeResultsToCSV, printResultsSummary } from './csv.js';
 import { loadCompanies, loadUrls, mergeCompaniesWithUrls, validateData } from './csv_loader.js';
 import { parseCliArgs } from './cli.js';
 import { fetcher } from './fetcher.js';
-import { extractEmployeeCountByRegex } from './extractor_regex.js';
-import { extractEmployeeCountByOpenRouter } from './extractor_llm_openrouter.js';
+import { processCompaniesInParallel, estimateProcessingTime } from './processor.js';
 import { join } from 'path';
 
 async function main() {
@@ -54,152 +53,14 @@ async function main() {
       return;
     }
     
-    logger.info(`${companiesWithUrls.length}社の処理を開始します`);
+    // 処理時間の推定
+    const estimatedTime = estimateProcessingTime(companiesWithUrls.length);
+    logger.info(`${companiesWithUrls.length}社の処理を開始します（推定時間: ${estimatedTime}）`);
     
-    // 処理結果を格納する配列
-    const results: ExtractionResult[] = [];
-    
-    // 各企業を処理
-    for (const companyWithUrls of companiesWithUrls) {
-      const { company, urls: companyUrls } = companyWithUrls;
-      logger.info(`処理中: ${company.name} (${companyUrls.length}個のURL)`);
-      
-      try {
-        // 企業をDBに登録
-        const dbCompany = db.upsertCompany(company.name);
-        
-        // URLの確認
-        if (companyUrls.length === 0) {
-          logger.warn(`URLが指定されていません: ${company.name}`);
-          results.push({
-            company_name: company.name,
-            employee_count: null,
-            source_url: '',
-            source_text: '',
-            extraction_method: 'failed',
-            confidence_score: 0,
-            extracted_at: new Date().toISOString(),
-            error_message: 'URLが指定されていません',
-          });
-          continue;
-        }
-        
-        // 優先度順にURLを処理
-        let finalResult: ExtractionResult | null = null;
-        
-        for (const urlData of companyUrls) {
-          logger.info(`ページ取得中: ${urlData.url} (${urlData.source_type})`);
-          const fetchResult = await fetcher.fetchPage(urlData.url);
-          
-          if (!fetchResult.success) {
-            logger.warn(`ページ取得失敗: ${urlData.url}`, fetchResult.error);
-            continue;
-          }
-          
-          // 従業員数の抽出（正規表現→LLM）
-          logger.info('従業員数を抽出中...');
-          
-          // 1. まず正規表現で抽出を試みる
-          const regexResult = extractEmployeeCountByRegex(fetchResult.text);
-          
-          if (regexResult.found && regexResult.value !== null) {
-            // 正規表現で抽出成功
-            logger.info(`正規表現で抽出成功: ${regexResult.value}人`);
-            finalResult = {
-              company_name: company.name,
-              employee_count: regexResult.value,
-              source_url: urlData.url,
-              source_text: regexResult.rawText,
-              extraction_method: 'regex',
-              confidence_score: regexResult.confidence,
-              extracted_at: new Date().toISOString(),
-            };
-            break; // 抽出成功したので終了
-          }
-          
-          // 2. 正規表現で見つからない場合はLLMを使用
-          logger.info('正規表現で見つからないためLLMを使用');
-          
-          try {
-            const llmResult = await extractEmployeeCountByOpenRouter(fetchResult.text);
-            
-            if (llmResult.found && llmResult.value !== null) {
-              // LLMで抽出成功
-              logger.info(`LLMで抽出成功: ${llmResult.value}人`);
-              finalResult = {
-                company_name: company.name,
-                employee_count: llmResult.value,
-                source_url: urlData.url,
-                source_text: llmResult.rawText || fetchResult.text.substring(0, 500),
-                extraction_method: 'llm',
-                confidence_score: llmResult.confidence,
-                extracted_at: new Date().toISOString(),
-              };
-              break; // 抽出成功したので終了
-            }
-          } catch (llmError) {
-            logger.error('LLM抽出エラー', llmError);
-          }
-          
-          // 3. どちらでも抽出できなかった場合
-          finalResult = {
-            company_name: company.name,
-            employee_count: null,
-            source_url: urlData.url,
-            source_text: fetchResult.text.substring(0, 500),
-            extraction_method: 'failed',
-            confidence_score: 0,
-            extracted_at: new Date().toISOString(),
-            error_message: '従業員数を抽出できませんでした',
-          };
-        }
-        
-        if (finalResult) {
-          results.push(finalResult);
-        } else {
-          results.push({
-            company_name: company.name,
-            employee_count: null,
-            source_url: companyUrls[0]?.url || '',
-            source_text: '',
-            extraction_method: 'failed',
-            confidence_score: 0,
-            extracted_at: new Date().toISOString(),
-            error_message: 'すべてのURLでページ取得に失敗',
-          });
-        }
-        
-        // 処理間隔を設ける（サーバー負荷軽減）
-        await sleep(1000);
-        
-        // 証跡をDBに保存
-        if (finalResult) {
-          db.insertEvidence({
-            company_id: dbCompany.id!,
-            value: finalResult.employee_count,
-            raw_text: finalResult.source_text,
-            source_url: finalResult.source_url,
-            source_type: 'web',
-            source_date: new Date().toISOString(),
-            score: finalResult.confidence_score,
-            model: config.llmProvider === 'openrouter' ? config.openRouterModelId : config.ollamaModel,
-          });
-        }
-        
-      } catch (error) {
-        logger.error(`エラー: ${company.name}`, error);
-        results.push({
-          company_name: company.name,
-          employee_count: null,
-          source_url: companyUrls[0]?.url || '',
-          source_text: '',
-          extraction_method: 'failed',
-          confidence_score: 0,
-          extracted_at: new Date().toISOString(),
-          error_message: String(error),
-        });
-      }
-    }
+    // 並列処理で各企業を処理
+    const results = await processCompaniesInParallel(companiesWithUrls, {
+      maxConcurrent: cliOptions.parallel || config.maxConcurrentRequests,
+    });
     
     // 結果をCSVに出力
     const outputPath = cliOptions.outputPath || 

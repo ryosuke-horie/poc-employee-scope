@@ -12,10 +12,7 @@
 - **データベース**: SQLite (better-sqlite3)
 - **スクレイピング**: Playwright
 - **HTMLパース**: cheerio
-- **LLM連携**:
-  - OpenRouter API (例: meta-llama/llama-3.1-8b-instruct)
-  - Ollama (ローカル, 例: llama3.1:8b, qwen2:7b)
-- **検索API**: SerpApi (任意)
+- **LLM連携**: OpenRouter API (例: meta-llama/llama-3.1-8b-instruct)
 - **環境変数管理**: dotenv
 
 ## 主要コマンド
@@ -24,31 +21,30 @@
 # 依存関係のインストール
 npm install
 
-# OpenRouterで実行
-LLM_PROVIDER=openrouter OPENROUTER_API_KEY=sk-xxx npm run start
-
-# ローカルのOllamaで実行
-LLM_PROVIDER=ollama OLLAMA_MODEL=llama3.1:8b npm run start
+# 実行（OpenRouter APIキーが必須）
+OPENROUTER_API_KEY=sk-or-v1-xxx npm run start
 
 # TypeScriptのコンパイル
 npm run build
 
-# 開発モード（設定されている場合）
+# 開発モード
 npm run dev
+
+# テスト実行
+npm run test
 ```
 
 ## アーキテクチャ
 
 パイプライン型アーキテクチャを採用：
 
-1. **入力**: CSVから企業名を読み込み
-2. **URL収集**: SerpApiまたは事前定義URLで関連ページを検索
-3. **ページ取得**: Playwrightで動的コンテンツに対応
-4. **抽出**: 
+1. **入力**: CSVから企業名とURLリストを読み込み
+2. **ページ取得**: Playwrightで動的コンテンツに対応
+3. **抽出**: 
    - まず正規表現パターンで試行
-   - 失敗時はLLMにフォールバック
-5. **保存**: 出典付きでSQLiteに保存
-6. **確認**: 人間による確認のためCSVエクスポート
+   - 失敗時はOpenRouter LLMにフォールバック
+4. **保存**: 出典付きでSQLiteに保存
+5. **確認**: 人間による確認のためCSVエクスポート
 
 ## データベーススキーマ
 
@@ -76,22 +72,25 @@ CREATE TABLE candidates(
 
 - `index.ts` - エントリーポイント
 - `db.ts` - SQLite操作
-- `serp.ts` - SerpApi連携（URL探索）
+- `csv_loader.ts` - CSVファイル読み込み
 - `fetcher.ts` - Playwright によるページ取得
 - `extractor_regex.ts` - 正規表現による抽出
 - `extractor_llm_openrouter.ts` - OpenRouter LLM抽出
-- `extractor_llm_ollama.ts` - Ollama ローカルLLM抽出
+- `processor.ts` - 処理パイプライン制御
 - `utils.ts` - 共通ユーティリティ
 
 ## 環境変数
 
 `.env`ファイルに以下を設定：
 ```
-LLM_PROVIDER=openrouter|ollama
-OPENROUTER_API_KEY=...
+# 必須
+OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxx
 OPENROUTER_MODEL_ID=meta-llama/llama-3.1-8b-instruct
-OLLAMA_MODEL=llama3.1:8b
-SERPAPI_KEY=... # 任意
+
+# オプション（デフォルト値あり）
+MAX_CONCURRENT_REQUESTS=3
+REQUEST_TIMEOUT_MS=30000
+MAX_TEXT_LENGTH_FOR_LLM=10000
 ```
 
 ## 抽出戦略

@@ -7,9 +7,9 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 関連ドキュメント: `docs/manual/setup.md`, `docs/manual/data_prep.md`, `docs/manual/source_guidelines.md`, `docs/manual/review_workflow.md`, `docs/schemas/review.schema.json`, `docs/frontend/design.md`
 
 ## 0. 整合性の是正（OpenRouter専用）
-- [ ] `src/config.ts`: `llmProvider`, `ollama*`, `serpApiKey` を除去し、`OPENROUTER_API_KEY`/`OPENROUTER_MODEL_ID` のみに簡素化（担当: Claude）
-- [ ] `.env.example`: OpenRouter関連のみ残す（キーの書式注記含む）（担当: Codex）
-- [ ] `printConfig()` 出力から不要項目を削除（SerpApi/Ollama）（担当: Claude）
+- [x] `src/config.ts`: `llmProvider`, `ollama*`, `serpApiKey` を除去し、`OPENROUTER_API_KEY`/`OPENROUTER_MODEL_ID` のみに簡素化（担当: Claude）
+- [x] `.env.example`: OpenRouter関連のみ残す（キーの書式注記含む）（担当: Claude）
+- [x] `printConfig()` 出力から不要項目を削除（SerpApi/Ollama）（担当: Claude）
 - 受入: `npm run start -- --help` 出力と `docs/*` の記述が一致（担当: Codex）
 
 ## 1. 取得と抽出の強化

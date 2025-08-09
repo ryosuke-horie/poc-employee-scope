@@ -9,10 +9,13 @@ export interface CliOptions {
 }
 
 const helpText = `
-従業員数取得システム
+従業員数自動取得システム (OpenRouter専用)
 
 使用方法:
   npm run start -- [オプション]
+
+必須環境変数:
+  OPENROUTER_API_KEY  OpenRouterのAPIキー (https://openrouter.ai/keys)
 
 オプション:
   --companies <path>  企業リストCSVファイルのパス (デフォルト: data/companies.csv)
@@ -24,7 +27,7 @@ const helpText = `
 例:
   npm run start
   npm run start -- --companies data/companies.csv --urls data/urls.csv
-  npm run start -- --output output/results.csv
+  npm run start -- --output output/results.csv --parallel 5
 
 CSVファイル形式:
   companies.csv: id,name

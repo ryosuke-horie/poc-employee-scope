@@ -120,7 +120,7 @@ async function processCompany(
       }
       
       // 2. 正規表現で見つからない場合はLLMを使用
-      if (config.llmProvider === 'openrouter' && config.openRouterApiKey) {
+      if (config.openRouterApiKey) {
         logger.info('正規表現で見つからないためLLMを使用');
         
         try {

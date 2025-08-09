@@ -17,9 +17,9 @@
 - [x] `.env` に `OPENROUTER_API_KEY`, `OPENROUTER_MODEL_ID` を設定（担当: ユーザー）
 
 ## フェーズ2: 入出力とDB
-- [ ] CSV入力（企業名リスト）処理 `src/index.ts` 基盤（担当: Claude）
-- [ ] SQLite 層 `src/db.ts`（スキーマ・接続・INSERT/SELECT）（担当: Claude）
-- [ ] CSVエクスポート機能（確認用出力）（担当: Claude）
+- [x] CSV入力（企業名リスト）処理 `src/index.ts` 基盤（担当: Claude）
+- [x] SQLite 層 `src/db.ts`（スキーマ・接続・INSERT/SELECT）（担当: Claude）
+- [x] CSVエクスポート機能（確認用出力）（担当: Claude）
 
 ## フェーズ3: 収集・取得
 - [ ] 固定URL対応（入力/設定でURLを受け取る）（担当: Claude）

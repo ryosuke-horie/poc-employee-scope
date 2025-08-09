@@ -4,8 +4,8 @@
 
 ## フェーズ0: 初期セットアップ
 - [x] 仕様確認とタスク分割の承認（担当: Codex 完了）
-- [ ] Node.js 18+ とパッケージ管理（npm）準備（担当: Claude）
-- [ ] プロジェクト初期化（`package.json`, `tsconfig.json`, ESLint/Prettier 任意）（担当: Claude）
+- [x] Node.js 18+ とパッケージ管理（npm）準備（担当: Claude）
+- [x] プロジェクト初期化（`package.json`, `tsconfig.json`, ESLint/Prettier 任意）（担当: Claude）
 
 ## フェーズ1: ディレクトリ/環境構築
 - [ ] ディレクトリ作成: `src/`, `tests/`（担当: Claude）

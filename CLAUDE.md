@@ -8,7 +8,7 @@
 
 ## 技術スタック
 
-- **言語**: TypeScript (Node.js 18+)
+- **言語**: TypeScript (Node.js 22+)
 - **データベース**: SQLite (better-sqlite3)
 - **スクレイピング**: Playwright
 - **HTMLパース**: cheerio

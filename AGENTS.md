@@ -60,3 +60,15 @@ git commit -m "docs: エージェント対応: ◯◯を更新 (#123)"
 - 依頼/実装: ユーザーが Claude に依頼し、Claude が実装・テストを実施。
 - 反映/記録: ユーザーが結果を取り込み、Codex はドキュメント/タスクを更新して「1プロンプト=1コミット」で履歴化。
 - 禁止事項: Codex は Claude への直接メッセージ送信・コマンド実行・API呼出を行わない。機密をプロンプトに含めない。ユーザー承認前に大規模変更を行わない。
+
+## 検索タスクにおける Gemini 利用
+- 目的: 公式サイトや一次情報の候補URLを素早く列挙し、`data/urls.csv` に追加するために利用。
+- 前提: ネットワークアクセスが必要なため、実行時は承認（昇格）を取得する。
+- 使い方（例）:
+  ```bash
+  gemini -p "以下の企業について、従業員数が記載される可能性が高い日本語の公式/一次情報のURL候補を列挙してください。各社2〜5件。出力はCSV形式のみで、ヘッダは company_id,url,source_type,priority。優先度は official/company-profile/IR=1、公式PDF=2〜3、Wikipedia=5、ニュース=7、まとめ=9。
+
+  company_id=1, 企業名: sincereed株式会社, ドメイン: sincereed.com
+  company_id=2, 企業名: マミヤITソリューションズ株式会社, ドメイン: mamiya-its.co.jp" 
+  ```
+- 反映手順: 提案結果をガイドライン（`docs/manual/source_guidelines.md`）に沿って正規化し、低信頼や存在しないURL（例: 存在しないWikipedia項目）は除去した上で `data/urls.csv` に追記。変更は「1プロンプト=1コミット」で記録。

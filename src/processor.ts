@@ -7,6 +7,7 @@ import { extractEmployeeCountByOpenRouter } from './extractor_llm_openrouter.js'
 import { type ExtractionResult } from './csv.js';
 import { type CompanyWithUrls } from './csv_loader.js';
 import { parallelLimit } from './utils.js';
+import { printUrlSummary } from './url_manager.js';
 
 export interface ProcessingOptions {
   maxConcurrent?: number;
@@ -40,13 +41,27 @@ async function processCompany(
       };
     }
     
-    // 優先度順にURLを処理
-    for (const urlData of companyUrls) {
-      logger.info(`ページ取得中: ${urlData.url} (${urlData.source_type})`);
+    // URL構成のサマリーを表示
+    printUrlSummary(company.name, companyUrls);
+    
+    // 優先度順にURLを処理（すでにソート済み）
+    let successfulExtraction = false;
+    
+    for (let i = 0; i < companyUrls.length; i++) {
+      const urlData = companyUrls[i];
+      const isLastUrl = i === companyUrls.length - 1;
+      
+      logger.info(`[${i + 1}/${companyUrls.length}] ページ取得中: ${urlData.url} (${urlData.source_type}, 優先度: ${urlData.priority})`);
+      
       const fetchResult = await fetcher.fetchPage(urlData.url);
       
       if (!fetchResult.success) {
         logger.warn(`ページ取得失敗: ${urlData.url}`, fetchResult.error);
+        
+        // 最後のURLでなければ次のURLにフォールバック
+        if (!isLastUrl) {
+          logger.info(`次のURLにフォールバック (${companyUrls[i + 1].url})`);
+        }
         continue;
       }
       
@@ -58,7 +73,8 @@ async function processCompany(
       
       if (regexResult.found && regexResult.value !== null) {
         // 正規表現で抽出成功
-        logger.info(`正規表現で抽出成功: ${regexResult.value}人 (${company.name})`);
+        logger.info(`✓ 正規表現で抽出成功: ${regexResult.value}人 (${company.name})`);
+        successfulExtraction = true;
         
         // 証跡をDBに保存
         db.insertEvidence({
@@ -93,7 +109,8 @@ async function processCompany(
           
           if (llmResult.found && llmResult.value !== null) {
             // LLMで抽出成功
-            logger.info(`LLMで抽出成功: ${llmResult.value}人 (${company.name})`);
+            logger.info(`✓ LLMで抽出成功: ${llmResult.value}人 (${company.name})`);
+            successfulExtraction = true;
             
             // 証跡をDBに保存
             db.insertEvidence({
@@ -121,6 +138,11 @@ async function processCompany(
         } catch (llmError) {
           logger.error('LLM抽出エラー', llmError);
         }
+      }
+      
+      // このURLでは抽出できなかった場合
+      if (!successfulExtraction && !isLastUrl) {
+        logger.info(`このURLでは抽出できませんでした。次のURLにフォールバック (${companyUrls[i + 1].url})`);
       }
     }
     

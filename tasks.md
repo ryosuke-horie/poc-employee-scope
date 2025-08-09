@@ -36,7 +36,7 @@
 - [x] ページ取得 `src/fetcher.ts`（Playwright）（担当: Claude）
 - [x] 取得リトライ/タイムアウト/ユーザーエージェント設定（担当: Claude）
  - [x] CLI 引数に `--companies data/companies.csv --urls data/urls.csv` を追加（担当: Claude）
- - [ ] priorityに基づく取得順制御とフォールバック（担当: Claude）
+ - [x] priorityに基づく取得順制御とフォールバック（担当: Claude）
 
 ## フェーズ4: 抽出
 - [x] 正規表現抽出 `src/extractor_regex.ts`（日本語/英語パターン）（担当: Claude）

@@ -27,13 +27,13 @@
 - [x] レビュー進捗（完了件数・未保存件数）の可視化（担当: Codex）
 
 ## TODO（画面/UX）
-- [ ] 一覧: 企業別サマリと現在の決定を表示（仕様: Codex、実装: Claude）
-- [ ] 一覧: 検索・フィルタ（状態/score範囲/source_type/抽出方法/エラー/未判定）（仕様: Codex、実装: Claude）
+- [x] 一覧: 企業別サマリと現在の決定を表示（仕様: Codex、実装: Claude）
+- [x] 一覧: 検索・フィルタ（状態/score範囲/source_type/抽出方法/エラー/未判定）（仕様: Codex、実装: Claude）
 - [ ] 一覧: 並び替え（会社名/score/更新日時）（仕様: Codex、実装: Claude）
-- [ ] 詳細: 証跡カード（URL/タイトル/抜粋/score/source_type/取得日時/方法/HTTP ステータス）（仕様: Codex、実装: Claude）
-- [ ] 詳細: 決定入力（decision/override_value/note）（仕様: Codex、実装: Claude）
+- [x] 詳細: 証跡カード（URL/タイトル/抜粋/score/source_type/取得日時/方法/HTTP ステータス）（仕様: Codex、実装: Claude）
+- [x] 詳細: 決定入力（decision/override_value/note）（仕様: Codex、実装: Claude）
 - [ ] 共通: 未保存ガード（遷移/クローズ時警告）（仕様: Codex、実装: Claude）
-- [ ] 共通: ツールバー（保存/ダウンロード/インポート）（仕様: Codex、実装: Claude）
+- [x] 共通: ツールバー（保存/ダウンロード/インポート）（仕様: Codex、実装: Claude）
   
 ### TODO（フィルタ仕様・並び替え詳細）
 - [ ] 状態フィルタ: ok/ng/unknown/未判定のみ（複数選択可・デフォルト=全て）（担当: Codex）
@@ -51,7 +51,7 @@
 ## TODO（データ I/F）
 - [x] 入力: `review.json` を読み込み（required: generated_at, companies[], evidence[], review_state[]）（担当: Codex）
 - [x] 読み込み経路: `public/review.json` または `GET /api/review`（担当: Codex）
-- [ ] 保存経路: JSON ダウンロード または `POST /api/review`（ローカル限定）（担当: Claude）
+- [x] 保存経路: JSON ダウンロード または `POST /api/review`（ローカル限定）（担当: Claude）
 - [ ] バリデーション: `ajv` によるスキーマ検証（エラー可視化）（担当: Claude）
   
 ### TODO（データマッピング・整合性）
@@ -59,13 +59,13 @@
 - [ ] null/未定義の扱いを定義（override_value/note/score等）（担当: Codex）
 - [ ] evidenceの最新/代表選定ロジック（score降順/時刻/優先source_type）（仕様: Codex、実装: Claude）
 - [x] `decided_at` は保存時にクライアントで付与（ISO 8601）（仕様: Codex、実装: Claude）
-- [ ] JSONインポート: `<input type=\"file\">` から `review.json` を読み込み可能に（ドラッグ&ドロップ対応）（担当: Claude）
+- [x] JSONインポート: `<input type=\"file\">` から `review.json` を読み込み可能に（ドラッグ&ドロップ対応）（担当: Claude）
 
 ## TODO（機能）
 - [ ] 検索/フィルタ/ソート（URLクエリで状態共有）（担当: Claude）
 - [ ] 編集（decision/override_value/note）と 1 段階の Undo（担当: Claude）
 - [x] 保存時に `review_state` を更新し `decided_at` を ISO 8601 付与（担当: Claude）
-- [ ] エクスポート: レビュー済みのみ CSV（companies + 最終決定）（担当: Claude）
+- [x] エクスポート: レビュー済みのみ CSV（companies + 最終決定）（担当: Claude）
 - [ ] 差分ハイライト（任意、直前 bundle との比較）（担当: Claude）
   
 ### TODO（CSVエクスポート仕様）
@@ -97,7 +97,7 @@
 
 ## TODO（連携フロー）
 - [x] CLI: `poc bundle` で `output/review/review.json` 生成（担当: Codex）
-- [ ] Frontend: `public/review.json` 配置 or `GET /api/review` 実装（担当: Claude）
+- [x] Frontend: `public/review.json` 配置 or `GET /api/review` 実装（担当: Claude）
 - [ ] UI レビュー→保存（ダウンロード or `POST /api/review`）（担当: ユーザー／Claude）
 - [ ] CLI: `poc import --review` → `export --final`（importは未実装、export --finalは実装済み）（担当: Claude）
 

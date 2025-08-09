@@ -34,6 +34,12 @@ export interface Config {
   // 出力設定
   outputDir: string;
   logLevel: 'debug' | 'info' | 'warn' | 'error';
+  
+  // コスト最適化設定
+  maxTextLengthForLLM: number; // LLMに送信する最大テキスト長
+  preferRegexOverLLM: boolean; // 正規表現を優先
+  skipLowPriorityUrls: boolean; // 低優先度URLをスキップ
+  maxUrlsPerCompany: number; // 企業あたりの最大URL数
 }
 
 function getEnvVar(key: string, defaultValue?: string): string {
@@ -74,6 +80,12 @@ export const config: Config = {
   // 出力設定
   outputDir: getEnvVar('OUTPUT_DIR', join(__dirname, '../output')),
   logLevel: (process.env.LOG_LEVEL || 'info') as 'debug' | 'info' | 'warn' | 'error',
+  
+  // コスト最適化設定
+  maxTextLengthForLLM: parseInt(getEnvVar('MAX_TEXT_LENGTH_FOR_LLM', '10000'), 10),
+  preferRegexOverLLM: getEnvVar('PREFER_REGEX_OVER_LLM', 'true') === 'true',
+  skipLowPriorityUrls: getEnvVar('SKIP_LOW_PRIORITY_URLS', 'false') === 'true',
+  maxUrlsPerCompany: parseInt(getEnvVar('MAX_URLS_PER_COMPANY', '5'), 10),
 };
 
 // 設定検証
@@ -115,5 +127,10 @@ export function printConfig(): void {
   console.log(`データベース: ${config.dbPath}`);
   console.log(`出力先: ${config.outputDir}`);
   console.log(`ログレベル: ${config.logLevel}`);
+  console.log('--- コスト最適化設定 ---');
+  console.log(`LLM最大テキスト長: ${config.maxTextLengthForLLM}文字`);
+  console.log(`正規表現優先: ${config.preferRegexOverLLM ? '✓' : '✗'}`);
+  console.log(`低優先度URLスキップ: ${config.skipLowPriorityUrls ? '✓' : '✗'}`);
+  console.log(`企業あたり最大URL数: ${config.maxUrlsPerCompany}`);
   console.log('================\n');
 }

@@ -6,8 +6,10 @@ import { extractEmployeeCountByRegex } from './extractor_regex.js';
 import { extractEmployeeCountByOpenRouter } from './extractor_llm_openrouter.js';
 import { type ExtractionResult } from './csv.js';
 import { type CompanyWithUrls } from './csv_loader.js';
-import { parallelLimit } from './utils.js';
+import { parallelLimit, sleep } from './utils.js';
 import { printUrlSummary } from './url_manager.js';
+import { rateLimitManager } from './rate_limiter.js';
+import { errorHandler } from './error_handler.js';
 
 export interface ProcessingOptions {
   maxConcurrent?: number;
@@ -21,8 +23,11 @@ async function processCompany(
   companyWithUrls: CompanyWithUrls
 ): Promise<ExtractionResult> {
   const { company, urls: companyUrls } = companyWithUrls;
+  let retryCount = 0;
+  const maxRetries = 3;
   
-  try {
+  while (retryCount < maxRetries) {
+    try {
     // 企業をDBに登録
     const dbCompany = db.upsertCompany(company.name);
     
@@ -53,13 +58,27 @@ async function processCompany(
       
       logger.info(`[${i + 1}/${companyUrls.length}] ページ取得中: ${urlData.url} (${urlData.source_type}, 優先度: ${urlData.priority})`);
       
+      // Webスクレイピングのレート制限チェック
+      await rateLimitManager.checkLimit('web');
+      
       const fetchResult = await fetcher.fetchPage(urlData.url);
       
       if (!fetchResult.success) {
+        // エラーハンドリング
+        const errorAction = errorHandler.handleError(company.name, fetchResult.error);
+        
+        if (errorAction.shouldRetry && retryCount < maxRetries - 1) {
+          logger.info(`リトライを実行します (${retryCount + 1}/${maxRetries})`);
+          await sleep(2000 * Math.pow(2, retryCount)); // 指数バックオフ
+          retryCount++;
+          i--; // 同じURLを再試行
+          continue;
+        }
+        
         logger.warn(`ページ取得失敗: ${urlData.url}`, fetchResult.error);
         
         // 最後のURLでなければ次のURLにフォールバック
-        if (!isLastUrl) {
+        if (!isLastUrl && errorAction.shouldSkip) {
           logger.info(`次のURLにフォールバック (${companyUrls[i + 1].url})`);
         }
         continue;
@@ -105,6 +124,9 @@ async function processCompany(
         logger.info('正規表現で見つからないためLLMを使用');
         
         try {
+          // OpenRouterのレート制限チェック
+          await rateLimitManager.checkLimit('openrouter');
+          
           const llmResult = await extractEmployeeCountByOpenRouter(fetchResult.text);
           
           if (llmResult.found && llmResult.value !== null) {
@@ -136,6 +158,17 @@ async function processCompany(
             };
           }
         } catch (llmError) {
+          // LLMエラーのハンドリング
+          const errorAction = errorHandler.handleError(company.name, llmError);
+          
+          if (errorAction.shouldRetry && retryCount < maxRetries - 1) {
+            logger.info(`LLM呼び出しをリトライします (${retryCount + 1}/${maxRetries})`);
+            await sleep(3000 * Math.pow(2, retryCount)); // 指数バックオフ
+            retryCount++;
+            i--; // 同じURLを再試行
+            continue;
+          }
+          
           logger.error('LLM抽出エラー', llmError);
         }
       }
@@ -173,19 +206,57 @@ async function processCompany(
       error_message: '従業員数を抽出できませんでした',
     };
     
-  } catch (error) {
-    logger.error(`エラー: ${company.name}`, error);
-    return {
-      company_name: company.name,
-      employee_count: null,
-      source_url: companyUrls[0]?.url || '',
-      source_text: '',
-      extraction_method: 'failed',
-      confidence_score: 0,
-      extracted_at: new Date().toISOString(),
-      error_message: String(error),
-    };
+    } catch (error) {
+      // 一般的なエラーハンドリング
+      const errorAction = errorHandler.handleError(company.name, error);
+      
+      if (errorAction.shouldAbort) {
+        logger.error(`処理中止: ${company.name}`, error);
+        return {
+          company_name: company.name,
+          employee_count: null,
+          source_url: companyUrls[0]?.url || '',
+          source_text: '',
+          extraction_method: 'failed',
+          confidence_score: 0,
+          extracted_at: new Date().toISOString(),
+          error_message: `処理中止: ${String(error)}`,
+        };
+      }
+      
+      if (errorAction.shouldRetry && retryCount < maxRetries - 1) {
+        logger.info(`処理全体をリトライします (${retryCount + 1}/${maxRetries})`);
+        await sleep(3000 * Math.pow(2, retryCount)); // 指数バックオフ
+        retryCount++;
+        continue;
+      }
+      
+      logger.error(`エラー: ${company.name}`, error);
+      return {
+        company_name: company.name,
+        employee_count: null,
+        source_url: companyUrls[0]?.url || '',
+        source_text: '',
+        extraction_method: 'failed',
+        confidence_score: 0,
+        extracted_at: new Date().toISOString(),
+        error_message: String(error),
+      };
+    }
   }
+  
+  // リトライ回数を超えた場合
+  logger.error(`リトライ上限に達しました: ${company.name}`);
+  return {
+    company_name: company.name,
+    employee_count: null,
+    source_url: companyUrls[0]?.url || '',
+    source_text: '',
+    extraction_method: 'failed',
+    confidence_score: 0,
+    extracted_at: new Date().toISOString(),
+    error_message: 'リトライ上限に達しました',
+  };
 }
 
 /**
@@ -224,6 +295,16 @@ export async function processCompaniesInParallel(
   const successCount = results.filter(r => r.employee_count !== null).length;
   
   logger.info(`処理完了: ${elapsed}秒で${companiesWithUrls.length}社処理（成功: ${successCount}社）`);
+  
+  // エラー統計を出力
+  const errorStats = errorHandler.getStatistics();
+  if (Object.keys(errorStats).length > 0) {
+    logger.info('エラー統計:', errorStats);
+  }
+  
+  // レート制限統計を出力
+  const rateLimitStats = rateLimitManager.getAllStats();
+  logger.info('API使用状況:', rateLimitStats);
   
   return results;
 }

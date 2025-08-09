@@ -32,6 +32,13 @@ class DatabaseManager {
   private db: Database.Database | null = null;
   
   /**
+   * データベースインスタンスを取得（内部使用）
+   */
+  getDb(): Database.Database | null {
+    return this.db;
+  }
+  
+  /**
    * データベース接続を初期化
    */
   async initialize(): Promise<void> {

@@ -18,6 +18,10 @@ export interface Config {
   requestTimeoutMs: number;
   retryCount: number;
   
+  // Playwright設定
+  userAgent: string;
+  navigationWaitMs: number;
+  
   // データベース設定
   dbPath: string;
   
@@ -30,6 +34,9 @@ export interface Config {
   preferRegexOverLLM: boolean; // 正規表現を優先
   skipLowPriorityUrls: boolean; // 低優先度URLをスキップ
   maxUrlsPerCompany: number; // 企業あたりの最大URL数
+  
+  // 抽出設定
+  snippetContextChars: number; // 抽出スニペットの前後文字数
 }
 
 function getEnvVar(key: string, defaultValue?: string): string {
@@ -51,6 +58,10 @@ export const config: Config = {
   requestTimeoutMs: parseInt(getEnvVar('REQUEST_TIMEOUT_MS', '30000'), 10),
   retryCount: parseInt(getEnvVar('RETRY_COUNT', '3'), 10),
   
+  // Playwright設定
+  userAgent: getEnvVar('USER_AGENT', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'),
+  navigationWaitMs: parseInt(getEnvVar('NAV_WAIT_MS', '2000'), 10),
+  
   // データベース設定
   dbPath: getEnvVar('DB_PATH', join(__dirname, '../data/companies.db')),
   
@@ -63,6 +74,9 @@ export const config: Config = {
   preferRegexOverLLM: getEnvVar('PREFER_REGEX_OVER_LLM', 'true') === 'true',
   skipLowPriorityUrls: getEnvVar('SKIP_LOW_PRIORITY_URLS', 'false') === 'true',
   maxUrlsPerCompany: parseInt(getEnvVar('MAX_URLS_PER_COMPANY', '5'), 10),
+  
+  // 抽出設定
+  snippetContextChars: parseInt(getEnvVar('SNIPPET_CONTEXT_CHARS', '200'), 10),
 };
 
 // 設定検証

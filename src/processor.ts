@@ -56,7 +56,12 @@ async function processCompany(
       const urlData = companyUrls[i];
       const isLastUrl = i === companyUrls.length - 1;
       
-      logger.info(`[${i + 1}/${companyUrls.length}] ページ取得中: ${urlData.url} (${urlData.source_type}, 優先度: ${urlData.priority})`);
+      logger.info(`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[${company.name}] URL ${i + 1}/${companyUrls.length}
+URL: ${urlData.url}
+タイプ: ${urlData.source_type} | 優先度: ${urlData.priority}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
       
       // Webスクレイピングのレート制限チェック
       await rateLimitManager.checkLimit('web');
@@ -68,18 +73,26 @@ async function processCompany(
         const errorAction = errorHandler.handleError(company.name, fetchResult.error);
         
         if (errorAction.shouldRetry && retryCount < maxRetries - 1) {
-          logger.info(`リトライを実行します (${retryCount + 1}/${maxRetries})`);
+          logger.info(`⚠️ リトライを実行します (${retryCount + 1}/${maxRetries})`);
           await sleep(2000 * Math.pow(2, retryCount)); // 指数バックオフ
           retryCount++;
           i--; // 同じURLを再試行
           continue;
         }
         
-        logger.warn(`ページ取得失敗: ${urlData.url}`, fetchResult.error);
+        logger.error(`
+❌ ページ取得失敗
+理由: ${fetchResult.error}
+URL: ${urlData.url}
+`);
         
         // 最後のURLでなければ次のURLにフォールバック
         if (!isLastUrl && errorAction.shouldSkip) {
-          logger.info(`次のURLにフォールバック (${companyUrls[i + 1].url})`);
+          logger.warn(`
+↓ 次のURLにフォールバック
+次URL: ${companyUrls[i + 1].url}
+タイプ: ${companyUrls[i + 1].source_type} | 優先度: ${companyUrls[i + 1].priority}
+`);
         }
         continue;
       }
@@ -92,7 +105,12 @@ async function processCompany(
       
       if (regexResult.found && regexResult.value !== null) {
         // 正規表現で抽出成功
-        logger.info(`✓ 正規表現で抽出成功: ${regexResult.value}人 (${company.name})`);
+        logger.info(`
+✅ 正規表現で抽出成功
+従業員数: ${regexResult.value}人
+信頼度: ${(regexResult.confidence * 100).toFixed(0)}%
+抽出箇所: ${regexResult.rawText.substring(0, 100)}...
+`);
         successfulExtraction = true;
         
         // 証跡をDBに保存
@@ -131,7 +149,12 @@ async function processCompany(
           
           if (llmResult.found && llmResult.value !== null) {
             // LLMで抽出成功
-            logger.info(`✓ LLMで抽出成功: ${llmResult.value}人 (${company.name})`);
+            logger.info(`
+✅ LLMで抽出成功
+従業員数: ${llmResult.value}人
+信頼度: ${(llmResult.confidence * 100).toFixed(0)}%
+モデル: ${llmResult.model}
+`);
             successfulExtraction = true;
             
             // 証跡をDBに保存
@@ -175,7 +198,18 @@ async function processCompany(
       
       // このURLでは抽出できなかった場合
       if (!successfulExtraction && !isLastUrl) {
-        logger.info(`このURLでは抽出できませんでした。次のURLにフォールバック (${companyUrls[i + 1].url})`);
+        logger.warn(`
+⚠️ このURLでは抽出できませんでした
+URL: ${urlData.url}
+↓ 次のURLにフォールバック
+次URL: ${companyUrls[i + 1].url}
+タイプ: ${companyUrls[i + 1].source_type} | 優先度: ${companyUrls[i + 1].priority}
+`);
+      } else if (!successfulExtraction && isLastUrl) {
+        logger.error(`
+❌ 最後のURLでも抽出できませんでした
+URL: ${urlData.url}
+`);
       }
     }
     

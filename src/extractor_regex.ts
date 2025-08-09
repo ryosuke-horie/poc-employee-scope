@@ -1,10 +1,13 @@
 import { logger } from './logger.js';
+import { config } from './config.js';
 
 export interface RegexExtractionResult {
   found: boolean;
   value: number | null;
   rawText: string;
   confidence: number;
+  matchStart?: number;
+  matchEnd?: number;
 }
 
 // 従業員数を表す正規表現パターン
@@ -124,6 +127,8 @@ export function extractEmployeeCountByRegex(text: string): RegexExtractionResult
     rawText: string;
     confidence: number;
     patternName: string;
+    matchStart?: number;
+    matchEnd?: number;
   }> = [];
   
   // 各パターンでマッチを試行
@@ -134,22 +139,63 @@ export function extractEmployeeCountByRegex(text: string): RegexExtractionResult
       if (match[1]) {
         const value = parseEmployeeCount(match[1]);
         if (value !== null) {
-          // マッチした前後のコンテキストを取得
-          const startIndex = Math.max(0, match.index! - 50);
-          const endIndex = Math.min(text.length, match.index! + match[0].length + 50);
-          const context = text.substring(startIndex, endIndex).trim();
+          // マッチした前後のコンテキストを取得（環境変数で設定可能）
+          const contextChars = config.snippetContextChars;
+          const matchIndex = match.index!;
+          const startIndex = Math.max(0, matchIndex - contextChars);
+          const endIndex = Math.min(text.length, matchIndex + match[0].length + contextChars);
+          
+          // 前後の文境界を探して自然な位置で切る
+          let contextStart = startIndex;
+          let contextEnd = endIndex;
+          
+          // 前方向：句読点や改行を探す
+          if (startIndex > 0) {
+            const beforeText = text.substring(Math.max(0, startIndex - 50), matchIndex);
+            const lastBreak = Math.max(
+              beforeText.lastIndexOf('。'),
+              beforeText.lastIndexOf('．'),
+              beforeText.lastIndexOf('\n'),
+              beforeText.lastIndexOf('</'),
+            );
+            if (lastBreak > -1) {
+              contextStart = startIndex - 50 + lastBreak + 1;
+            }
+          }
+          
+          // 後方向：句読点や改行を探す
+          if (endIndex < text.length) {
+            const afterText = text.substring(matchIndex + match[0].length, Math.min(text.length, endIndex + 50));
+            const firstBreak = Math.min(
+              afterText.indexOf('。') > -1 ? afterText.indexOf('。') : Infinity,
+              afterText.indexOf('．') > -1 ? afterText.indexOf('．') : Infinity,
+              afterText.indexOf('\n') > -1 ? afterText.indexOf('\n') : Infinity,
+              afterText.indexOf('<') > -1 ? afterText.indexOf('<') : Infinity,
+            );
+            if (firstBreak < Infinity) {
+              contextEnd = matchIndex + match[0].length + firstBreak + 1;
+            }
+          }
+          
+          const context = text.substring(contextStart, contextEnd).trim()
+            .replace(/\s+/g, ' ') // 余分な空白を正規化
+            .replace(/^[。．、,\s]+/, '') // 先頭の句読点を削除
+            .replace(/[。．、,\s]+$/, ''); // 末尾の句読点を削除
           
           results.push({
             value,
             rawText: context,
             confidence,
             patternName: name,
+            matchStart: matchIndex,
+            matchEnd: matchIndex + match[0].length,
           });
           
           logger.debug(`正規表現マッチ: ${name}`, {
             value,
             pattern: name,
             context: context.substring(0, 100),
+            position: `${matchIndex}-${matchIndex + match[0].length}`,
           });
         }
       }

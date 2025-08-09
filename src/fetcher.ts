@@ -72,6 +72,7 @@ class PageFetcher {
       // ユーザーエージェントを設定
       await page.setExtraHTTPHeaders({
         'Accept-Language': 'ja-JP,ja;q=0.9,en;q=0.8',
+        'User-Agent': config.userAgent,
       });
       
       await page.setViewportSize({ width: 1920, height: 1080 });
@@ -99,7 +100,7 @@ class PageFetcher {
       }
       
       // JavaScriptの実行を待つ
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(config.navigationWaitMs);
       
       // ページ情報を取得
       const title = await page.title();

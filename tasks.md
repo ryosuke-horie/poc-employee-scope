@@ -33,9 +33,9 @@
  - [x] CLI 引数に `--companies data/companies.csv --urls data/urls.csv` を追加（担当: Claude）
 
 ## フェーズ4: 抽出
-- [ ] 正規表現抽出 `src/extractor_regex.ts`（日本語/英語パターン）（担当: Claude）
-- [ ] LLM抽出: OpenRouter `src/extractor_llm_openrouter.ts`（STRICT JSON 返却）（担当: Claude）
-- [ ] LLM呼出の前処理（テキスト短縮・最大トークン管理）（担当: Claude）
+- [x] 正規表現抽出 `src/extractor_regex.ts`（日本語/英語パターン）（担当: Claude）
+- [x] LLM抽出: OpenRouter `src/extractor_llm_openrouter.ts`（STRICT JSON 返却）（担当: Claude）
+- [x] LLM呼出の前処理（テキスト短縮・最大トークン管理）（担当: Claude）
 
 ## フェーズ5: 連携・保存・確認
 - [ ] 出典URL/抜粋の保存（`evidence` テーブル）（担当: Claude）

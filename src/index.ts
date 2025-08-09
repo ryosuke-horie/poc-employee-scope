@@ -8,6 +8,8 @@ import { writeResultsToCSV, printResultsSummary, type ExtractionResult } from '.
 import { loadCompanies, loadUrls, mergeCompaniesWithUrls, validateData } from './csv_loader.js';
 import { parseCliArgs } from './cli.js';
 import { fetcher } from './fetcher.js';
+import { extractEmployeeCountByRegex } from './extractor_regex.js';
+import { extractEmployeeCountByOpenRouter } from './extractor_llm_openrouter.js';
 import { join } from 'path';
 
 async function main() {
@@ -94,21 +96,62 @@ async function main() {
             continue;
           }
           
-          // TODO: 従業員数の抽出（正規表現→LLM）
-          // 現時点ではページ取得のみ
+          // 従業員数の抽出（正規表現→LLM）
+          logger.info('従業員数を抽出中...');
+          
+          // 1. まず正規表現で抽出を試みる
+          const regexResult = extractEmployeeCountByRegex(fetchResult.text);
+          
+          if (regexResult.found && regexResult.value !== null) {
+            // 正規表現で抽出成功
+            logger.info(`正規表現で抽出成功: ${regexResult.value}人`);
+            finalResult = {
+              company_name: company.name,
+              employee_count: regexResult.value,
+              source_url: urlData.url,
+              source_text: regexResult.rawText,
+              extraction_method: 'regex',
+              confidence_score: regexResult.confidence,
+              extracted_at: new Date().toISOString(),
+            };
+            break; // 抽出成功したので終了
+          }
+          
+          // 2. 正規表現で見つからない場合はLLMを使用
+          logger.info('正規表現で見つからないためLLMを使用');
+          
+          try {
+            const llmResult = await extractEmployeeCountByOpenRouter(fetchResult.text);
+            
+            if (llmResult.found && llmResult.value !== null) {
+              // LLMで抽出成功
+              logger.info(`LLMで抽出成功: ${llmResult.value}人`);
+              finalResult = {
+                company_name: company.name,
+                employee_count: llmResult.value,
+                source_url: urlData.url,
+                source_text: llmResult.rawText || fetchResult.text.substring(0, 500),
+                extraction_method: 'llm',
+                confidence_score: llmResult.confidence,
+                extracted_at: new Date().toISOString(),
+              };
+              break; // 抽出成功したので終了
+            }
+          } catch (llmError) {
+            logger.error('LLM抽出エラー', llmError);
+          }
+          
+          // 3. どちらでも抽出できなかった場合
           finalResult = {
             company_name: company.name,
             employee_count: null,
             source_url: urlData.url,
-            source_text: fetchResult.text.substring(0, 500), // 最初の500文字を保存
+            source_text: fetchResult.text.substring(0, 500),
             extraction_method: 'failed',
             confidence_score: 0,
             extracted_at: new Date().toISOString(),
-            error_message: 'Extraction not implemented yet',
+            error_message: '従業員数を抽出できませんでした',
           };
-          
-          // 最初に成功したURLで処理を終了（TODO: 抽出実装後は成功判定を追加）
-          break;
         }
         
         if (finalResult) {

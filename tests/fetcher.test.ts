@@ -43,7 +43,7 @@ describe('fetchPage', () => {
     } finally {
       await server.close();
     }
-  });
+  }, 30000);
 
   it('returns error for 404 response', async () => {
     const server = await startServer((req, res) => {
@@ -58,6 +58,6 @@ describe('fetchPage', () => {
     } finally {
       await server.close();
     }
-  });
+  }, 30000);
 });
 

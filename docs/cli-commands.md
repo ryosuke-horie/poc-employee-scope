@@ -12,19 +12,16 @@
 
 ## コマンド一覧
 
-### 1. extract - 従業員数抽出（デフォルト）
+### 1. start - 従業員数抽出
 
 企業リストとURLリストから従業員数を自動抽出します。
 
 ```bash
 # 基本使用法
-npm run poc extract
+npm run start
 
 # オプション指定
-npm run poc extract -- --companies data/companies.csv --urls data/urls.csv --parallel 5
-
-# 省略形（extractはデフォルトコマンド）
-npm run poc
+npm run start -- --companies data/companies.csv --urls data/urls.csv --parallel 5
 ```
 
 **オプション:**

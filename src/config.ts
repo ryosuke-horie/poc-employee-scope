@@ -41,6 +41,13 @@ export interface Config {
 
 function getEnvVar(key: string, defaultValue?: string): string {
   const value = process.env[key];
+  const isTestEnv = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
+  
+  // テスト環境でOPENROUTER_API_KEYの場合はダミー値を返す
+  if (isTestEnv && key === 'OPENROUTER_API_KEY' && !value) {
+    return 'test-api-key';
+  }
+  
   if (!value && !defaultValue) {
     throw new Error(`環境変数 ${key} が設定されていません`);
   }
@@ -81,7 +88,10 @@ export const config: Config = {
 
 // 設定検証
 export function validateConfig(): void {
-  if (!config.openRouterApiKey) {
+  const isTestEnv = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
+  
+  // テスト環境では API キーの検証をスキップ
+  if (!isTestEnv && !config.openRouterApiKey) {
     throw new Error('OPENROUTER_API_KEYが設定されていません');
   }
   

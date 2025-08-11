@@ -15,8 +15,8 @@
 - [ ] AJV によるスキーマ検証の導入（担当: Claude）
   
 ### TODO（実装ガイド）
-- [x] ページ構成: `/` 一覧、`/company/[id]` 詳細（担当: Codex）
-- [x] コンポーネント粒度: EvidenceCard/DecisionControls/Filters/Toolbar（担当: Codex）
+- [x] ページ構成: `/` 一覧、`/company/[id]` 詳細（担当: Codex/Claude）
+- [x] コンポーネント粒度: EvidenceCard/DecisionControls/Filters/Toolbar（担当: Codex/Claude）
 - [x] スタイル: Tailwind基調、ダークモード任意（将来）（担当: Claude）
 
 ## TODO（ユースケース）
@@ -128,12 +128,12 @@
 ## 実装タスク（Claude・作業順）
 
 ### M1 — 基本表示とローカル保存
-- [ ] ルーティング最小構成: `/` と `/company/[id]` を作成（担当: Claude）
-- [ ] 状態管理: React Context + useReducer の骨格（型/初期状態/アクション）を実装（担当: Claude）
-- [ ] データ読込: `public/review.json` を fetch → 状態へ取り込み（担当: Claude）
-- [ ] 一覧ビュー: 企業サマリ＋現在の決定を表示（担当: Claude）
-- [ ] 詳細ビュー: EvidenceCard/DecisionControls で編集可能に（担当: Claude）
-- [ ] 保存: ツールバーの「保存」で `localStorage` に書込（キー: `review_state_v1`）、初期ロード時に復元（担当: Claude）
+- [x] ルーティング最小構成: `/` と `/company/[id]` を作成（担当: Claude）
+- [x] 状態管理: React Context + useReducer の骨格（型/初期状態/アクション）を実装（担当: Claude）
+- [x] データ読込: `public/review.json` を fetch → 状態へ取り込み（担当: Claude）
+- [x] 一覧ビュー: 企業サマリ＋現在の決定を表示（担当: Claude）
+- [x] 詳細ビュー: EvidenceCard/DecisionControls で編集可能に（担当: Claude）
+- [x] 保存: ツールバーの「保存」で `localStorage` に書込（キー: `review_state_v1`）、初期ロード時に復元（担当: Claude）
 
 ### M2 — 検索/フィルタ/ソート + AJV
 - [ ] 検索・フィルタの最小実装（状態/score/source_type/unknown 抽出）（担当: Claude）

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CompanyWithReview, ReviewBundle } from '@/types/review';
 
 interface FiltersProps {
@@ -10,11 +10,11 @@ interface FiltersProps {
 }
 
 export default function Filters({ companies, onFilter, reviewData }: FiltersProps) {
-  const [decisionFilter, setDecisionFilter] = useState<string[]>(['ok', 'ng', 'unknown', 'none']);
-  const [scoreMin, setScoreMin] = useState(0);
-  const [scoreMax, setScoreMax] = useState(1);
-
-  const applyFilters = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [decisionFilter, setDecisionFilter] = useState<string[]>([]);
+  
+  // フィルタが変更されたら自動的に適用
+  useEffect(() => {
     const allCompanies = reviewData.companies.map(company => {
       const evidences = reviewData.evidence.filter(e => e.company_id === company.id);
       const reviewState = reviewData.review_state.find(r => r.company_id === company.id);
@@ -30,102 +30,115 @@ export default function Filters({ companies, onFilter, reviewData }: FiltersProp
       };
     });
 
-    const filtered = allCompanies.filter(company => {
-      // Decision filter
-      const decision = company.reviewState?.decision || 'none';
-      if (!decisionFilter.includes(decision === 'none' ? 'none' : decision)) {
-        return false;
-      }
-
-      // Score filter
-      if (company.bestEvidence) {
-        const score = company.bestEvidence.score || 0;
-        if (score < scoreMin || score > scoreMax) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-
+    let filtered = [...allCompanies];
+    
+    // 検索フィルタ
+    if (searchTerm) {
+      filtered = filtered.filter(company =>
+        company.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    // 判定フィルタ
+    if (decisionFilter.length > 0) {
+      filtered = filtered.filter(company => {
+        const decision = company.reviewState?.decision || 'unset';
+        return decisionFilter.includes(decision);
+      });
+    }
+    
     onFilter(filtered);
+  }, [searchTerm, decisionFilter, reviewData, onFilter]);
+
+  const toggleDecisionFilter = (decision: string) => {
+    setDecisionFilter(prev =>
+      prev.includes(decision)
+        ? prev.filter(d => d !== decision)
+        : [...prev, decision]
+    );
   };
 
-  const toggleDecision = (decision: string) => {
-    setDecisionFilter(prev => {
-      if (prev.includes(decision)) {
-        return prev.filter(d => d !== decision);
-      } else {
-        return [...prev, decision];
-      }
-    });
+  const decisionCounts = {
+    ok: reviewData.companies.filter(c => 
+      reviewData.review_state.find(r => r.company_id === c.id)?.decision === 'ok'
+    ).length,
+    ng: reviewData.companies.filter(c => 
+      reviewData.review_state.find(r => r.company_id === c.id)?.decision === 'ng'
+    ).length,
+    unknown: reviewData.companies.filter(c => 
+      reviewData.review_state.find(r => r.company_id === c.id)?.decision === 'unknown'
+    ).length,
+    unset: reviewData.companies.filter(c => 
+      !reviewData.review_state.find(r => r.company_id === c.id)?.decision
+    ).length,
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-lg font-semibold mb-4">フィルタ</h3>
+    <div className="bg-white rounded-lg shadow p-4 space-y-4">
+      <h3 className="text-lg font-semibold">フィルタ</h3>
       
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            判定状態
-          </label>
-          <div className="space-y-2">
-            {[
-              { value: 'ok', label: 'OK' },
-              { value: 'ng', label: 'NG' },
-              { value: 'unknown', label: '不明' },
-              { value: 'none', label: '未判定' },
-            ].map(option => (
-              <label key={option.value} className="flex items-center">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          企業名検索
+        </label>
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="企業名を入力..."
+          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          判定状態
+        </label>
+        <div className="space-y-2">
+          {[
+            { value: 'ok', label: 'OK', color: 'text-green-600' },
+            { value: 'ng', label: 'NG', color: 'text-red-600' },
+            { value: 'unknown', label: '不明', color: 'text-gray-600' },
+            { value: 'unset', label: '未判定', color: 'text-yellow-600' },
+          ].map(option => (
+            <label
+              key={option.value}
+              className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded"
+            >
+              <div className="flex items-center">
                 <input
                   type="checkbox"
                   checked={decisionFilter.includes(option.value)}
-                  onChange={() => toggleDecision(option.value)}
+                  onChange={() => toggleDecisionFilter(option.value)}
                   className="mr-2"
                 />
-                <span className="text-sm">{option.label}</span>
-              </label>
-            ))}
-          </div>
+                <span className={option.color}>{option.label}</span>
+              </div>
+              <span className="text-sm text-gray-500">
+                ({decisionCounts[option.value as keyof typeof decisionCounts]}件)
+              </span>
+            </label>
+          ))}
         </div>
+      </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            信頼度スコア
-          </label>
-          <div className="space-y-2">
-            <div>
-              <label className="text-xs text-gray-600">最小: {(scoreMin * 100).toFixed(0)}%</label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={scoreMin * 100}
-                onChange={(e) => setScoreMin(parseInt(e.target.value) / 100)}
-                className="w-full"
-              />
-            </div>
-            <div>
-              <label className="text-xs text-gray-600">最大: {(scoreMax * 100).toFixed(0)}%</label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={scoreMax * 100}
-                onChange={(e) => setScoreMax(parseInt(e.target.value) / 100)}
-                className="w-full"
-              />
-            </div>
-          </div>
+      {(searchTerm || decisionFilter.length > 0) && (
+        <div className="pt-4 border-t">
+          <button
+            onClick={() => {
+              setSearchTerm('');
+              setDecisionFilter([]);
+            }}
+            className="w-full px-3 py-2 text-sm text-gray-600 bg-gray-100 rounded hover:bg-gray-200 transition-colors"
+          >
+            フィルタをクリア
+          </button>
         </div>
+      )}
 
-        <button
-          onClick={applyFilters}
-          className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-        >
-          フィルタを適用
-        </button>
+      <div className="pt-4 border-t text-xs text-gray-500">
+        <p>全企業数: {reviewData.companies.length}</p>
+        <p>表示中: {companies.length}件</p>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import { parseCliArgs } from './cli_extended.js';
 import { fetcher } from './fetcher.js';
 import { processCompaniesInParallel, estimateProcessingTime } from './processor.js';
 import { exportToCSV, exportToJSON, createReviewBundle, exportFinalCSV } from './exporter.js';
+import { importReviewResults, validateReviewBundle } from './importer.js';
 import { join } from 'path';
 
 async function mainExtract(options: any) {
@@ -125,9 +126,19 @@ async function mainImport(options: any) {
     // データベースの初期化
     await db.initialize();
     
-    // TODO: レビュー結果のインポート機能を実装
-    logger.info(`レビュー結果をインポート: ${options.reviewPath}`);
-    logger.warn('importコマンドは次のフェーズで実装予定です');
+    // レビュー結果の検証
+    logger.info(`レビュー結果を検証中: ${options.reviewPath}`);
+    const isValid = await validateReviewBundle(options.reviewPath);
+    
+    if (!isValid) {
+      logger.error('レビュー結果の形式が不正です');
+      process.exit(1);
+    }
+    
+    // レビュー結果をインポート
+    await importReviewResults(options.reviewPath);
+    
+    logger.info('インポートが完了しました');
     
   } finally {
     db.close();

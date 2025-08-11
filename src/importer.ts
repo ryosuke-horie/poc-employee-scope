@@ -60,7 +60,7 @@ export async function importReviewResults(reviewJsonPath: string): Promise<void>
     let importedCount = 0;
     let skippedCount = 0;
     
-    db.transaction(() => {
+    const processImport = () => {
       for (const reviewState of reviewData.review_state) {
         try {
           // 企業IDの存在確認
@@ -91,7 +91,9 @@ export async function importReviewResults(reviewJsonPath: string): Promise<void>
           skippedCount++;
         }
       }
-    })();
+    };
+    
+    db.transaction(processImport);
     
     // 結果サマリー
     logger.info('レビュー結果のインポート完了', {

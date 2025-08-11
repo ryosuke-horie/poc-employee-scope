@@ -33,7 +33,7 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 
 ## TODO（レビュー状態の往復）
 - [x] `review_state(company_id, decision, decided_at, note, override_value)` テーブル新設（担当: Claude）
-- [ ] `poc import --review path/to/review.json` で反映（担当: Claude）
+- [x] `poc import --review path/to/review.json` で反映（担当: Claude）
 - [x] `poc export --final csv` で最終値（override 優先→evidence 最良）を出力（担当: Claude）
 - [ ] 受入: import→final export まで往復でき、件数・値が期待通り（担当: Codex）
 
@@ -54,7 +54,7 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 - [ ] ヘルプ出力とドキュメントの一致（コマンド/オプション）※ `README` の例が現行CLIと不一致（要更新）
 - [x] ログのみで収集〜抽出の成否/理由が追跡可能（全URL接続失敗のため成功例は未確認）
 - [x] `review.json` が検証に合格し、`bundle` が生成（簡易検証・AJV導入待ち）
-- [ ] `import --review` 後に `export --final` の値が期待通り（override 優先）※ `import` 未実装。代替: `export --final --review` は動作
+- [x] `import --review` 後に `export --final` の値が期待通り（override 優先）※ 実装完了、DBからレビュー状態を反映
 - [x] CSV エクスポート列が固定・記載と一致（ヘッダ確認済み）
 - [ ] ドキュメント（README/マニュアル）が最新で再現可能（要反映）
 
@@ -80,6 +80,9 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
     - 単体テスト9ケース全て成功
   - export --final コマンド: 実装済み（exportFinalCSV関数）
     - レビュー結果JSONを読み込み、override_value優先で最終値を出力
-  - import --review コマンド: 未実装（TODO残り）
+  - import --review コマンド: 実装完了
+    - `npm run start:extended -- import --review output/review/review.json` でインポート成功
+    - 10件全てインポート（imported: 10, skipped: 0）
+    - DBからレビュー状態を読み込んで export --final で反映確認
 
 備考: フロントエンド側の詳細タスクは `tasks-frontend.md` を参照（Codex: 設計/文書、Claude: 実装、ユーザー: オペレーション）。

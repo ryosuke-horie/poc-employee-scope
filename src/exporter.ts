@@ -373,11 +373,22 @@ export async function exportFinalCSV(outputPath: string, reviewJsonPath?: string
         .filter(e => e.value !== null)
         .sort((a, b) => (b.score || 0) - (a.score || 0))[0];
       
-      // レビュー結果があれば優先
+      // レビュー結果があれば優先（JSONファイルまたはDBから）
       let finalValue = bestEvidence?.value || null;
       let decision = 'unknown';
       let note = '';
       
+      // まずDBからレビュー状態を取得
+      const dbReviewState = db.getReviewState(company.id);
+      if (dbReviewState) {
+        decision = dbReviewState.decision;
+        note = dbReviewState.note || '';
+        if (dbReviewState.override_value !== null && dbReviewState.override_value !== undefined) {
+          finalValue = dbReviewState.override_value;
+        }
+      }
+      
+      // JSONファイルが指定されている場合は、それを優先
       if (reviewData) {
         const reviewState = reviewData.review_state.find(
           r => r.company_id === company.id

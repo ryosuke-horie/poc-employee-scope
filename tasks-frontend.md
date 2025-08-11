@@ -35,12 +35,12 @@
 - [ ] 共通: ツールバー（保存のみ。ダウンロード/インポートは除外）（仕様: Codex、実装: Claude）
   
 ### TODO（フィルタ仕様・並び替え詳細）
-- [ ] 状態フィルタ: ok/ng/unknown/未判定のみ（複数選択可・デフォルト=全て）（担当: Codex）
-- [ ] scoreフィルタ: 下限/上限スライダー（0.0〜1.0、刻み0.05、デフォルト=全域）（担当: Codex）
-- [ ] source_type: チェックボックス群（official/ir/pdf/gov/wiki/news/agg/web/api/manual）（担当: Codex）
-- [ ] 方法フィルタ: extraction_method（regex/llm/failed）（担当: Codex）
-- [ ] 失敗のみ: value=null またはエラー有のevidence優先を抽出（担当: Codex）
-- [ ] 並び替え優先: 決定状態→score降順→更新日時降順（デフォルト）（担当: Codex）
+- [x] 状態フィルタ: ok/ng/unknown/未判定のみ（複数選択可・デフォルト=全て）（担当: Codex）
+- [x] scoreフィルタ: 下限/上限スライダー（0.0〜1.0、刻み0.05、デフォルト=全域）（担当: Codex）
+- [x] source_type: チェックボックス群（official/ir/pdf/gov/wiki/news/agg/web/api/manual）（担当: Codex）
+- [x] 方法フィルタ: extraction_method（regex/llm/failed）（担当: Codex）
+- [x] 失敗のみ: value=null またはエラー有のevidence優先を抽出（担当: Codex）
+- [x] 並び替え優先: 決定状態→score降順→更新日時降順（デフォルト）（担当: Codex）
 
 ### TODO（ナビゲーション/ルーティング）
 - [ ] URLクエリでフィルタ/ソート/ページング状態を保持（共有可能）（仕様: Codex、実装: Claude）

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/review.schema.json",
+  "title": "ReviewBundle",
+  "type": "object",
+  "required": ["generated_at", "companies", "evidence", "review_state"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "companies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "integer", "minimum": 1 },
+          "name": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "company_id", "source_url", "raw_text", "extracted_at"
+        ],
+        "properties": {
+          "company_id": { "type": "integer", "minimum": 1 },
+          "value": { "type": ["integer", "null"], "minimum": 0 },
+          "raw_text": { "type": "string" },
+          "source_url": { "type": "string", "format": "uri" },
+          "source_type": { "type": "string", "enum": [
+            "official", "ir", "pdf", "gov", "wiki", "news", "agg", "web", "api", "manual"
+          ] },
+          "page_title": { "type": ["string", "null"] },
+          "status_code": { "type": ["integer", "null"] },
+          "score": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+          "model": { "type": ["string", "null"] },
+          "snippet_start": { "type": ["integer", "null"], "minimum": 0 },
+          "snippet_end": { "type": ["integer", "null"], "minimum": 0 },
+          "extracted_at": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "review_state": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["company_id", "decision"],
+        "properties": {
+          "company_id": { "type": "integer", "minimum": 1 },
+          "decision": { "type": "string", "enum": ["ok", "ng", "unknown"] },
+          "override_value": { "type": ["integer", "null"] },
+          "note": { "type": ["string", "null"] },
+          "decided_at": { "type": ["string", "null"], "format": "date-time" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

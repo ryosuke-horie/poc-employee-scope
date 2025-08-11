@@ -39,11 +39,11 @@ export default function HomePage() {
       if (!validationResult.valid) {
         setValidationErrors(validationResult.errors || []);
         console.error('Schema validation errors:', validationResult.errors);
-        // 検証エラーがある場合は描画を中断
-        return;
+        // 検証エラーがあっても、データは表示する（警告として表示）
+      } else {
+        setValidationErrors([]);
       }
       
-      setValidationErrors([]);
       setReviewData(data);
       
       // 企業データを整形

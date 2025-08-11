@@ -116,15 +116,36 @@
 - [ ] 基本フロー（一覧/詳細/編集/保存）がローカルで完結（担当: Codex）
   
 ### 受入シナリオ（詳細）
-- 受入シナリオは `docs/frontend/acceptance-scenarios.md` に分離（担当: Codex）。
+- [ ] サンプル `review.json`（10社/100evidence相当）で一覧が2秒以内に描画（担当: Codex）
+- [ ] フィルタ: unknownのみ + score>=0.8 + source_type=official で結果が即時反映（担当: Codex）
+- [ ] 詳細で decision=ok + override=1234 + note 入力→保存→一覧・詳細に反映（担当: Codex）
 
 ## TODO（マイルストーン）
 - [ ] M1: 静的読込 + 一覧/詳細表示 + ローカル保存（JSONダウンロード無し）（担当: Codex）
 - [ ] M2: 検索/フィルタ/ソート + スキーマ検証（AJV）（担当: Codex）
 - [ ] M3: 使い勝手調整（ショートカット任意/軽微な性能調整）（担当: Codex）
 
-## 実装タスク（別文書）
-- 実装計画は `docs/frontend/implementation-plan.md` に分離（担当: Claude）。
+## 実装タスク（Claude・作業順）
+
+### M1 — 基本表示とローカル保存
+- [ ] ルーティング最小構成: `/` と `/company/[id]` を作成（担当: Claude）
+- [ ] 状態管理: React Context + useReducer の骨格（型/初期状態/アクション）を実装（担当: Claude）
+- [ ] データ読込: `public/review.json` を fetch → 状態へ取り込み（担当: Claude）
+- [ ] 一覧ビュー: 企業サマリ＋現在の決定を表示（担当: Claude）
+- [ ] 詳細ビュー: EvidenceCard/DecisionControls で編集可能に（担当: Claude）
+- [ ] 保存: ツールバーの「保存」で `localStorage` に書込（キー: `review_state_v1`）、初期ロード時に復元（担当: Claude）
+
+### M2 — 検索/フィルタ/ソート + AJV
+- [ ] 検索・フィルタの最小実装（状態/score/source_type/unknown 抽出）（担当: Claude）
+- [ ] ソート（会社名/score/更新日時のうち最低1種 + 既定順）（担当: Claude）
+- [ ] AJV 初期化: `public/schemas/review.schema.json` を参照、`ajv-formats` 追加（担当: Claude）
+- [ ] 検証フック: 読込時/保存前にスキーマ検証を実施（担当: Claude）
+- [ ] エラーバナー: 件数＋先頭5件の要約表示、詳細は `console.error`（担当: Claude）
+
+### M3 — 使い勝手調整（任意）
+- [ ] ローディング/エンプティ/エラーの表示整理（担当: Claude）
+- [ ] 検索/フィルタ/ソートの調整と軽微なリファクタ（担当: Claude）
+- [ ] ショートカット対応（任意）（担当: Claude）
   
 ### TODO（成果物の明確化）
 - [ ] M1 成果: `/public/review.json` 想定のスタブとUIワイヤーフレーム（担当: Codex）

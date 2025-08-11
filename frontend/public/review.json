@@ -55,7 +55,7 @@
       "model": "meta-llama/llama-3.1-8b-instruct",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 03:43:26"
+      "extracted_at": "2025-08-09T03:43:26.000Z"
     },
     {
       "company_id": 1,
@@ -69,7 +69,7 @@
       "model": "meta-llama/llama-3.1-8b-instruct",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 03:40:17"
+      "extracted_at": "2025-08-09T03:40:17.000Z"
     },
     {
       "company_id": 2,
@@ -83,7 +83,7 @@
       "model": "meta-llama/llama-3.1-8b-instruct",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 03:43:30"
+      "extracted_at": "2025-08-09T03:43:30.000Z"
     },
     {
       "company_id": 2,
@@ -97,7 +97,7 @@
       "model": "meta-llama/llama-3.1-8b-instruct",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 03:40:17"
+      "extracted_at": "2025-08-09T03:40:17.000Z"
     },
     {
       "company_id": 3,
@@ -111,7 +111,7 @@
       "model": "meta-llama/llama-3.1-8b-instruct",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 03:43:34"
+      "extracted_at": "2025-08-09T03:43:34.000Z"
     },
     {
       "company_id": 3,
@@ -125,7 +125,7 @@
       "model": "meta-llama/llama-3.1-8b-instruct",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 03:40:17"
+      "extracted_at": "2025-08-09T03:40:17.000Z"
     },
     {
       "company_id": 4,
@@ -139,7 +139,7 @@
       "model": "meta-llama/llama-3.1-8b-instruct",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 03:40:17"
+      "extracted_at": "2025-08-09T03:40:17.000Z"
     },
     {
       "company_id": 5,
@@ -153,7 +153,7 @@
       "model": "meta-llama/llama-3.1-8b-instruct",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 03:40:17"
+      "extracted_at": "2025-08-09T03:40:17.000Z"
     },
     {
       "company_id": 11,
@@ -167,7 +167,7 @@
       "model": "regex",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 04:05:31"
+      "extracted_at": "2025-08-09T04:05:31.000Z"
     },
     {
       "company_id": 11,
@@ -181,7 +181,7 @@
       "model": "meta-llama/llama-3.1-8b-instruct",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 03:56:23"
+      "extracted_at": "2025-08-09T03:56:23.000Z"
     },
     {
       "company_id": 11,
@@ -195,7 +195,7 @@
       "model": "meta-llama/llama-3.1-8b-instruct",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 03:50:24"
+      "extracted_at": "2025-08-09T03:50:24.000Z"
     },
     {
       "company_id": 12,
@@ -209,7 +209,7 @@
       "model": "none",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 04:05:41"
+      "extracted_at": "2025-08-09T04:05:41.000Z"
     },
     {
       "company_id": 12,
@@ -223,7 +223,7 @@
       "model": "meta-llama/llama-3.1-8b-instruct",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 03:56:29"
+      "extracted_at": "2025-08-09T03:56:29.000Z"
     },
     {
       "company_id": 19,
@@ -237,7 +237,7 @@
       "model": "regex",
       "snippet_start": 100,
       "snippet_end": 200,
-      "extracted_at": "2025-08-09 05:02:33"
+      "extracted_at": "2025-08-09T05:02:33.000Z"
     },
     {
       "company_id": 20,
@@ -251,7 +251,7 @@
       "model": "none",
       "snippet_start": null,
       "snippet_end": null,
-      "extracted_at": "2025-08-09 05:02:33"
+      "extracted_at": "2025-08-09T05:02:33.000Z"
     },
     {
       "company_id": 21,
@@ -265,7 +265,7 @@
       "model": "regex",
       "snippet_start": 50,
       "snippet_end": 150,
-      "extracted_at": "2025-08-09 05:02:33"
+      "extracted_at": "2025-08-09T05:02:33.000Z"
     }
   ],
   "review_state": [

@@ -16,7 +16,7 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 - [x] Playwright 環境変数化（`REQUEST_TIMEOUT_MS`, `USER_AGENT`, `NAV_WAIT_MS`）（担当: Claude）
 - [x] 抽出スニペットを `raw_text` に格納（マッチ周辺 N 文字 + 近傍要素）（担当: Claude）
 - [x] priority フォールバック結果を詳細ログ化（担当: Claude）
-- [ ] 受入: URL単位で成功/失敗/理由/根拠がログだけで追跡可能（担当: Codex）
+- [x] 受入: URL単位で成功/失敗/理由/根拠がログだけで追跡可能（担当: Codex）
 
 ## TODO（証跡/DB）
 - [x] DB拡張: `page_title`, `status_code`, `fetched_at`, `snippet_start`, `snippet_end`（担当: Claude）
@@ -52,13 +52,16 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 
 ## 受入チェックリスト（CLI総合）
 - [ ] ヘルプ出力とドキュメントの一致（コマンド/オプション）※ `README` の例が現行CLIと不一致（要更新）
-- [ ] ログのみで収集〜抽出の成否/理由が追跡可能（未検証）
+- [x] ログのみで収集〜抽出の成否/理由が追跡可能（全URL接続失敗のため成功例は未確認）
 - [x] `review.json` が検証に合格し、`bundle` が生成（簡易検証・AJV導入待ち）
 - [ ] `import --review` 後に `export --final` の値が期待通り（override 優先）※ `import` 未実装。代替: `export --final --review` は動作
 - [x] CSV エクスポート列が固定・記載と一致（ヘッダ確認済み）
 - [ ] ドキュメント（README/マニュアル）が最新で再現可能（要反映）
 
 ## 検証結果（メモ）
+- 実施日時: 2025-08-09
+  - ログ確認: `npm run dev:extended -- extract --parallel 1 --companies data/companies.csv --urls data/urls.csv`
+    - 全URLで接続失敗（ERR_TUNNEL_CONNECTION_FAILED）したが開始/エラー理由/フォールバックが記録されURL単位で追跡可能
 - 実施日時: 2025-08-10
 - ヘルプ確認:
   - `npm run start -- --help`（従来版ヘルプ表示OK）

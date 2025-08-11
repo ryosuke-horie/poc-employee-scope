@@ -5,6 +5,10 @@ node_modules/
 dist/
 *.tsbuildinfo
 
+# Next.js build output
+.next/
+frontend/.next/
+
 # Environment variables
 .env
 .env.local

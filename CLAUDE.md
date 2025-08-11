@@ -32,7 +32,53 @@ npm run dev
 
 # テスト実行
 npm run test
+
+# フロントエンド開発サーバー起動（ghostツール使用）
+ghost run --cwd frontend npm run dev
 ```
+
+## Ghostツール（バックグラウンドプロセス管理）
+
+開発サーバーの起動と管理にghostツールを使用します：
+
+```bash
+# フロントエンド開発サーバーをバックグラウンドで起動
+ghost run --cwd frontend npm run dev
+
+# CLIツールをバックグラウンドで実行
+ghost run npm run start
+
+# 環境変数を指定して実行
+ghost run --env NODE_ENV=production --env PORT=3000 npm start
+
+# ログファイルの確認
+# Started時に表示されるLog fileパスを参照
+```
+
+### フロントエンド修正後の確認プロセス
+
+フロントエンドの修正を行った後は、必ず以下の手順で動作確認を行います：
+
+1. **開発サーバーの再起動**
+   ```bash
+   ghost run --cwd frontend npm run dev
+   ```
+
+2. **確認項目の説明**
+   - 実装した機能の動作確認内容を明示
+   - エラーの有無（コンソール、画面表示）
+   - スキーマ検証の成功/失敗
+   - データの読込/保存の成否
+   - localStorage への保存動作
+
+3. **確認URL**
+   - http://localhost:3000 - 一覧画面
+   - http://localhost:3000/company/[id] - 詳細画面
+
+4. **動作確認の報告**
+   - 正常動作した機能
+   - 発生したエラーとその内容
+   - 修正が必要な箇所
 
 ## アーキテクチャ
 

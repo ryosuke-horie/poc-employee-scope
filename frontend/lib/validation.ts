@@ -3,21 +3,30 @@ import addFormats from 'ajv-formats';
 
 let validator: Ajv | null = null;
 let validateFunction: any = null;
+let initPromise: Promise<void> | null = null;
 
 const initializeValidator = async () => {
-  if (validator) return;
+  if (validateFunction) return;
+  if (initPromise) return initPromise;
   
-  validator = new Ajv({ allErrors: true, strict: false });
-  addFormats(validator);
+  initPromise = (async () => {
+    validator = new Ajv({ allErrors: true, strict: false });
+    addFormats(validator);
+    
+    try {
+      const response = await fetch('/schemas/review.schema.json');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch schema: ${response.status}`);
+      }
+      const schema = await response.json();
+      validateFunction = validator.compile(schema);
+    } catch (error) {
+      console.error('Failed to load schema:', error);
+      throw new Error('スキーマの読み込みに失敗しました');
+    }
+  })();
   
-  try {
-    const response = await fetch('/schemas/review.schema.json');
-    const schema = await response.json();
-    validateFunction = validator.compile(schema);
-  } catch (error) {
-    console.error('Failed to load schema:', error);
-    throw new Error('スキーマの読み込みに失敗しました');
-  }
+  return initPromise;
 };
 
 export interface ValidationResult {

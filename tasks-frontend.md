@@ -115,10 +115,8 @@
 - [x] スキーマ適合（読込/保存時にAJV合格）（担当: Codex）
 - [ ] 基本フロー（一覧/詳細/編集/保存）がローカルで完結（担当: Codex）
   
-### TODO（受入シナリオの詳細）
-- [ ] サンプル `review.json`（10社/100evidence相当）で一覧が2秒以内に描画（担当: Codex）
-- [ ] フィルタ: unknownのみ + score>=0.8 + source_type=official で結果が即時反映（担当: Codex）
-- [ ] 詳細で decision=ok + override=1234 + note 入力→保存→一覧・詳細に反映（担当: Codex）
+### 受入シナリオ（詳細）
+- 受入シナリオは `docs/frontend/acceptance-scenarios.md` に分離（担当: Codex）。
 
 ## TODO（マイルストーン）
 - [ ] M1: 静的読込 + 一覧/詳細表示 + ローカル保存（JSONダウンロード無し）（担当: Codex）

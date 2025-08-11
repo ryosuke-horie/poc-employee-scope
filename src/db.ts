@@ -28,6 +28,15 @@ export interface Evidence {
   error_summary?: string;
 }
 
+export interface ReviewState {
+  id?: number;
+  company_id: number;
+  decision: 'ok' | 'ng' | 'unknown';
+  decided_at: string;
+  note?: string;
+  override_value?: number | null;
+}
+
 class DatabaseManager {
   private db: Database.Database | null = null;
   
@@ -98,10 +107,24 @@ class DatabaseManager {
       )
     `);
     
+    // review_stateテーブル
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS review_state (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        company_id INTEGER NOT NULL UNIQUE,
+        decision TEXT NOT NULL CHECK(decision IN ('ok', 'ng', 'unknown')),
+        decided_at TEXT NOT NULL,
+        note TEXT,
+        override_value INTEGER,
+        FOREIGN KEY (company_id) REFERENCES companies(id)
+      )
+    `);
+    
     // インデックス作成
     this.db.exec(`
       CREATE INDEX IF NOT EXISTS idx_evidence_company_id ON evidence(company_id);
       CREATE INDEX IF NOT EXISTS idx_evidence_extracted_at ON evidence(extracted_at);
+      CREATE INDEX IF NOT EXISTS idx_review_state_company_id ON review_state(company_id);
     `);
     
     logger.debug('テーブルを作成しました');
@@ -116,6 +139,10 @@ class DatabaseManager {
     insertEvidence?: Database.Statement;
     selectEvidence?: Database.Statement;
     selectAllEvidence?: Database.Statement;
+    upsertReviewState?: Database.Statement;
+    selectReviewState?: Database.Statement;
+    selectAllReviewStates?: Database.Statement;
+    deleteReviewState?: Database.Statement;
   } = {};
   
   private prepareStatements(): void {
@@ -147,6 +174,25 @@ class DatabaseManager {
         JOIN companies c ON e.company_id = c.id
         ORDER BY e.extracted_at DESC
       `),
+      upsertReviewState: this.db.prepare(`
+        INSERT OR REPLACE INTO review_state (
+          company_id, decision, decided_at, note, override_value
+        ) VALUES (?, ?, ?, ?, ?)
+      `),
+      selectReviewState: this.db.prepare(
+        'SELECT * FROM review_state WHERE company_id = ?'
+      ),
+      selectAllReviewStates: this.db.prepare(`
+        SELECT 
+          c.name as company_name,
+          r.*
+        FROM review_state r
+        JOIN companies c ON r.company_id = c.id
+        ORDER BY r.decided_at DESC
+      `),
+      deleteReviewState: this.db.prepare(
+        'DELETE FROM review_state WHERE company_id = ?'
+      ),
     };
   }
   
@@ -237,19 +283,74 @@ class DatabaseManager {
   }
   
   /**
+   * レビュー状態を保存または更新
+   */
+  upsertReviewState(reviewState: Omit<ReviewState, 'id'>): void {
+    if (!this.db || !this.preparedStatements.upsertReviewState) {
+      throw new Error('データベースが初期化されていません');
+    }
+    
+    this.preparedStatements.upsertReviewState.run(
+      reviewState.company_id,
+      reviewState.decision,
+      reviewState.decided_at,
+      reviewState.note || null,
+      reviewState.override_value !== undefined ? reviewState.override_value : null
+    );
+    
+    logger.debug('レビュー状態を保存しました', { company_id: reviewState.company_id });
+  }
+  
+  /**
+   * 企業のレビュー状態を取得
+   */
+  getReviewState(companyId: number): ReviewState | null {
+    if (!this.db || !this.preparedStatements.selectReviewState) {
+      throw new Error('データベースが初期化されていません');
+    }
+    
+    return this.preparedStatements.selectReviewState.get(companyId) as ReviewState | null;
+  }
+  
+  /**
+   * すべてのレビュー状態を取得
+   */
+  getAllReviewStates(): any[] {
+    if (!this.db || !this.preparedStatements.selectAllReviewStates) {
+      throw new Error('データベースが初期化されていません');
+    }
+    
+    return this.preparedStatements.selectAllReviewStates.all();
+  }
+  
+  /**
+   * レビュー状態を削除
+   */
+  deleteReviewState(companyId: number): void {
+    if (!this.db || !this.preparedStatements.deleteReviewState) {
+      throw new Error('データベースが初期化されていません');
+    }
+    
+    this.preparedStatements.deleteReviewState.run(companyId);
+    logger.debug('レビュー状態を削除しました', { company_id: companyId });
+  }
+  
+  /**
    * 統計情報を取得
    */
-  getStatistics(): { companies: number; evidence: number; successful: number } {
+  getStatistics(): { companies: number; evidence: number; successful: number; reviewed: number } {
     if (!this.db) throw new Error('データベースが初期化されていません');
     
     const companies = this.db.prepare('SELECT COUNT(*) as count FROM companies').get() as { count: number };
     const evidence = this.db.prepare('SELECT COUNT(*) as count FROM evidence').get() as { count: number };
     const successful = this.db.prepare('SELECT COUNT(*) as count FROM evidence WHERE value IS NOT NULL').get() as { count: number };
+    const reviewed = this.db.prepare('SELECT COUNT(*) as count FROM review_state').get() as { count: number };
     
     return {
       companies: companies.count,
       evidence: evidence.count,
       successful: successful.count,
+      reviewed: reviewed.count,
     };
   }
 }

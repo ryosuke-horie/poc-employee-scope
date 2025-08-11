@@ -14,7 +14,12 @@ const initializeValidator = async () => {
   initPromise = (async () => {
     try {
       console.log('Initializing AJV validator...');
-      validator = new Ajv({ allErrors: true, strict: false });
+      validator = new Ajv({ 
+        allErrors: true, 
+        strict: false,
+        addUsedSchema: false,
+        validateFormats: true
+      });
       addFormats(validator);
       
       console.log('Fetching schema from /schemas/review.schema.json...');

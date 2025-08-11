@@ -6,6 +6,9 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 
 関連: `docs/manual/setup.md`, `docs/manual/data_prep.md`, `docs/manual/source_guidelines.md`, `docs/manual/review_workflow.md`, `docs/schemas/review.schema.json`, `docs/frontend/design.md`, `tasks-frontend.md`
 
+実装タスク（別文書）
+- CLI の実装計画は `docs/cli/implementation-plan.md` に分離（担当: Claude）。
+
 ## TODO（整合性/設定）
 - [x] `src/config.ts` から `ollama*`/`serpApiKey` を除去し OpenRouter へ集約（担当: Claude）
 - [x] `.env.example` を OpenRouter 用に簡素化（担当: Claude）

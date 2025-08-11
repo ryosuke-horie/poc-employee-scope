@@ -32,9 +32,9 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 - [x] 受入: `output/review/review.json` が生成され、構造検証に合格（AJV未導入のため簡易検証）（担当: Codex）
 
 ## TODO（レビュー状態の往復）
-- [ ] `review_state(company_id, decision, decided_at, note, override_value)` テーブル新設（担当: Claude）
+- [x] `review_state(company_id, decision, decided_at, note, override_value)` テーブル新設（担当: Claude）
 - [ ] `poc import --review path/to/review.json` で反映（担当: Claude）
-- [ ] `poc export --final csv` で最終値（override 優先→evidence 最良）を出力（担当: Claude）
+- [x] `poc export --final csv` で最終値（override 優先→evidence 最良）を出力（担当: Claude）
 - [ ] 受入: import→final export まで往復でき、件数・値が期待通り（担当: Codex）
 
 ## TODO（運用補助）
@@ -73,5 +73,13 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
   - 先頭行: `company_name,employee_count,source_url,source_text,extraction_method,confidence_score,extracted_at,page_title,status_code,error_message`
 - 最終CSV（代替手順）: `npm run start:extended -- export --final --review output/review/review.json --output output/final.csv`
   - 動作: レビュー（unknown）を反映しつつ最良evidence情報を出力（import未実装のため代替）
+- 実施日時: 2025-08-11
+  - review_stateテーブル実装: PR #29でマージ完了
+    - テーブル定義、CRUD操作（upsert/get/getAll/delete）実装済み
+    - マイグレーションスクリプト（`npm run migrate`）実装済み
+    - 単体テスト9ケース全て成功
+  - export --final コマンド: 実装済み（exportFinalCSV関数）
+    - レビュー結果JSONを読み込み、override_value優先で最終値を出力
+  - import --review コマンド: 未実装（TODO残り）
 
 備考: フロントエンド側の詳細タスクは `tasks-frontend.md` を参照（Codex: 設計/文書、Claude: 実装、ユーザー: オペレーション）。

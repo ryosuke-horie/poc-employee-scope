@@ -14,6 +14,7 @@
     "dev": "tsx src/index.ts",
     "dev:extended": "tsx src/index_extended.ts",
     "clean": "rimraf dist",
+    "migrate": "tsx src/migrate.ts",
     "test": "vitest",
     "test:run": "vitest run",
     "lint": "eslint src --ext .ts",

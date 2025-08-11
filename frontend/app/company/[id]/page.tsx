@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ReviewBundle, CompanyWithReview, ReviewState } from '@/types/review';
+import ValidationErrorBanner from '@/components/ValidationErrorBanner';
+import { validateReview } from '@/lib/validation';
+import { ErrorObject } from 'ajv';
 
 export default function CompanyDetailPage() {
   const params = useParams();
@@ -17,6 +20,7 @@ export default function CompanyDetailPage() {
     decision: 'unknown',
   });
   const [loading, setLoading] = useState(true);
+  const [validationErrors, setValidationErrors] = useState<ErrorObject[]>([]);
 
   useEffect(() => {
     loadCompanyData();
@@ -26,6 +30,17 @@ export default function CompanyDetailPage() {
     try {
       const response = await fetch('/review.json');
       const data: ReviewBundle = await response.json();
+      
+      // スキーマ検証
+      const validationResult = await validateReview(data);
+      if (!validationResult.valid) {
+        setValidationErrors(validationResult.errors || []);
+        console.error('Schema validation errors:', validationResult.errors);
+        setLoading(false);
+        return;
+      }
+      
+      setValidationErrors([]);
       setReviewData(data);
       
       const companyData = data.companies.find(c => c.id === companyId);
@@ -57,7 +72,7 @@ export default function CompanyDetailPage() {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!reviewData || !company) return;
     
     const updatedReviewState = {
@@ -72,6 +87,24 @@ export default function CompanyDetailPage() {
       ...reviewData,
       review_state: updatedReviewStates,
     };
+    
+    // 保存前にスキーマ検証
+    const validationResult = await validateReview(updatedData);
+    if (!validationResult.valid) {
+      setValidationErrors(validationResult.errors || []);
+      console.error('Schema validation errors before save:', validationResult.errors);
+      return;
+    }
+    
+    setValidationErrors([]);
+    
+    // localStorageに保存
+    try {
+      localStorage.setItem('review_state_v1', JSON.stringify(updatedData));
+      console.log('Data saved to localStorage');
+    } catch (err) {
+      console.error('Failed to save to localStorage:', err);
+    }
     
     // JSONをダウンロード
     const blob = new Blob([JSON.stringify(updatedData, null, 2)], { type: 'application/json' });
@@ -95,6 +128,10 @@ export default function CompanyDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {validationErrors.length > 0 && (
+        <ValidationErrorBanner errors={validationErrors} />
+      )}
+      
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">

@@ -5,12 +5,16 @@ import { ReviewBundle, CompanyWithReview } from '@/types/review';
 import CompanyList from '@/components/CompanyList';
 import Filters from '@/components/Filters';
 import Toolbar from '@/components/Toolbar';
+import ValidationErrorBanner from '@/components/ValidationErrorBanner';
+import { validateReview } from '@/lib/validation';
+import { ErrorObject } from 'ajv';
 
 export default function HomePage() {
   const [reviewData, setReviewData] = useState<ReviewBundle | null>(null);
   const [filteredCompanies, setFilteredCompanies] = useState<CompanyWithReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<ErrorObject[]>([]);
 
   // review.jsonを読み込む
   useEffect(() => {
@@ -29,6 +33,17 @@ export default function HomePage() {
       }
       
       const data: ReviewBundle = await response.json();
+      
+      // スキーマ検証
+      const validationResult = await validateReview(data);
+      if (!validationResult.valid) {
+        setValidationErrors(validationResult.errors || []);
+        console.error('Schema validation errors:', validationResult.errors);
+        // 検証エラーがある場合は描画を中断
+        return;
+      }
+      
+      setValidationErrors([]);
       setReviewData(data);
       
       // 企業データを整形
@@ -61,6 +76,26 @@ export default function HomePage() {
   };
 
   const handleSave = async (updatedData: ReviewBundle) => {
+    // 保存前にスキーマ検証
+    const validationResult = await validateReview(updatedData);
+    if (!validationResult.valid) {
+      setValidationErrors(validationResult.errors || []);
+      console.error('Schema validation errors before save:', validationResult.errors);
+      // 検証エラーがある場合は保存を中断
+      return;
+    }
+    
+    setValidationErrors([]);
+    
+    // localStorageに保存
+    try {
+      localStorage.setItem('review_state_v1', JSON.stringify(updatedData));
+      console.log('Data saved to localStorage');
+    } catch (err) {
+      console.error('Failed to save to localStorage:', err);
+      setError('Failed to save data');
+    }
+    
     // JSONダウンロード
     const blob = new Blob([JSON.stringify(updatedData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -75,9 +110,19 @@ export default function HomePage() {
 
   const handleImport = (file: File) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const data = JSON.parse(e.target?.result as string) as ReviewBundle;
+        
+        // インポート時もスキーマ検証
+        const validationResult = await validateReview(data);
+        if (!validationResult.valid) {
+          setValidationErrors(validationResult.errors || []);
+          console.error('Schema validation errors on import:', validationResult.errors);
+          return;
+        }
+        
+        setValidationErrors([]);
         setReviewData(data);
         const companiesWithReview = processCompanies(data);
         setFilteredCompanies(companiesWithReview);
@@ -123,6 +168,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {validationErrors.length > 0 && (
+        <ValidationErrorBanner errors={validationErrors} />
+      )}
+      
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <h1 className="text-2xl font-bold text-gray-900">
@@ -171,6 +220,17 @@ export default function HomePage() {
                 };
                 
                 setReviewData(updatedData);
+                
+                // 状態更新時もlocalStorageに保存
+                validateReview(updatedData).then(result => {
+                  if (result.valid) {
+                    localStorage.setItem('review_state_v1', JSON.stringify(updatedData));
+                    setValidationErrors([]);
+                  } else {
+                    setValidationErrors(result.errors || []);
+                    console.error('Validation errors on update:', result.errors);
+                  }
+                });
               }}
             />
           </div>

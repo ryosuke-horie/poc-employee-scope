@@ -12,7 +12,7 @@
 ## TODO（技術選定）
 - [x] Next.js 14 App Router + TypeScript + Tailwind（daisyUI 任意）（選定: Codex、セットアップ: Claude）
 - [x] 状態管理: React Context + useReducer（最小依存）（選定: Codex、実装: Claude）
-- [ ] AJV によるスキーマ検証の導入（担当: Claude）
+- [x] AJV によるスキーマ検証の導入（担当: Claude）
   
 ### TODO（実装ガイド）
 - [x] ページ構成: `/` 一覧、`/company/[id]` 詳細（担当: Codex）
@@ -50,8 +50,8 @@
 ## TODO（データ I/F）
 - [x] 入力: `review.json` を読み込み（required: generated_at, companies[], evidence[], review_state[]）（担当: Codex）
 - [x] 読み込み経路: `public/review.json`（静的ファイル）（担当: Codex）
-- [ ] バリデーション: `ajv` によるスキーマ検証（エラー可視化）（担当: Claude）
-- [ ] ローカル保存: 保存ボタンで `localStorage` に書き込み（自動保存なし）（担当: Claude）
+- [x] バリデーション: `ajv` によるスキーマ検証（エラー可視化）（担当: Claude）
+- [x] ローカル保存: 保存ボタンで `localStorage` に書き込み（自動保存なし）（担当: Claude）
 - [ ] 復元: 初期ロード時に `localStorage` を読み込み（キーがあれば）（担当: Claude）
   
 ### TODO（データマッピング・整合性）
@@ -75,9 +75,9 @@
   - 読込/保存の双方でスキーマ適合に合格すること。
   - 不合格時は UI が明確に中断/警告し、原因が要約で把握できること。
 - 実装タスク（担当: Claude）:
-  - スキーマ取り込みと AJV 初期化（`ajv-formats` 含む）。
-  - 読込時/保存前の検証フックの追加。
-  - エラーバナー表示コンポーネント（簡易版）の実装。
+  - [x] スキーマ取り込みと AJV 初期化（`ajv-formats` 含む）。
+  - [x] 読込時/保存前の検証フックの追加。
+  - [x] エラーバナー表示コンポーネント（簡易版）の実装。
 
 ## TODO（機能）
 - [ ] 検索/フィルタ/ソート（URLクエリ共有は任意）（担当: Claude）
@@ -90,7 +90,7 @@
 - 本フェーズ対象外（将来の拡張用に仕様書は保持）
 
 ### TODO（状態管理/保存）
-- [ ] ローカル保存: 保存ボタンで `localStorage` へ書き込み（自動保存なし）（担当: Claude）
+- [x] ローカル保存: 保存ボタンで `localStorage` へ書き込み（自動保存なし）（担当: Claude）
 - [ ] 復元: 初期ロード時に `localStorage` を読み込み（キーがあれば）（担当: Claude）
 - [-] 未保存件数アイコン/未保存ガード/履歴Undo（最小フェーズでは除外）
 
@@ -109,10 +109,10 @@
 ## TODO（連携フロー）
 - [x] CLI: `poc bundle` で `output/review/review.json` 生成（担当: Codex）
 - [x] Frontend: `public/review.json` を静的読込（担当: Claude）
-- [ ] UI レビュー→保存（localStorage へ保存）（担当: ユーザー／Claude）
+- [x] UI レビュー→保存（localStorage へ保存）（担当: ユーザー／Claude）
 
 ## TODO（受入基準）
-- [ ] スキーマ適合（読込/保存時にAJV合格）（担当: Codex）
+- [x] スキーマ適合（読込/保存時にAJV合格）（担当: Codex）
 - [ ] 基本フロー（一覧/詳細/編集/保存）がローカルで完結（担当: Codex）
   
 ### TODO（受入シナリオの詳細）
@@ -138,9 +138,9 @@
 ### M2 — 検索/フィルタ/ソート + AJV
 - [ ] 検索・フィルタの最小実装（状態/score/source_type/unknown 抽出）（担当: Claude）
 - [ ] ソート（会社名/score/更新日時のうち最低1種 + 既定順）（担当: Claude）
-- [ ] AJV 初期化: `public/schemas/review.schema.json` を参照、`ajv-formats` 追加（担当: Claude）
-- [ ] 検証フック: 読込時/保存前にスキーマ検証を実施（担当: Claude）
-- [ ] エラーバナー: 件数＋先頭5件の要約表示、詳細は `console.error`（担当: Claude）
+- [x] AJV 初期化: `public/schemas/review.schema.json` を参照、`ajv-formats` 追加（担当: Claude）
+- [x] 検証フック: 読込時/保存前にスキーマ検証を実施（担当: Claude）
+- [x] エラーバナー: 件数＋先頭5件の要約表示、詳細は `console.error`（担当: Claude）
 
 ### M3 — 使い勝手調整（任意）
 - [ ] ローディング/エンプティ/エラーの表示整理（担当: Claude）

@@ -5,19 +5,18 @@
 参考: `docs/frontend/design.md`（設計）、`docs/schemas/review.schema.json`（スキーマ）、`docs/manual/review_workflow.md`（運用）。
 
 ## TODO（計画・範囲）
-- [ ] スコープ確定（一覧/詳細/編集/保存/エクスポート/検索・フィルタ/スキーマ検証/未保存ガード）（担当: Codex）
-- [ ] 非スコープ明確化（公開・認証・多人数編集・非ローカル保存等）（担当: Codex）
-- [ ] ペルソナ合意（リサーチ担当、監修者）（担当: Codex）
+- [x] スコープ確定（一覧/詳細/編集/保存/検索・フィルタ/スキーマ検証）（担当: Codex）
+- [x] 非スコープ明確化（公開・認証・多人数編集・非ローカル保存・エクスポート・A11y・未保存ガード）（担当: Codex）
+- [x] ペルソナ合意（リサーチ担当、監修者）（担当: Codex）
 
 ## TODO（技術選定）
 - [x] Next.js 14 App Router + TypeScript + Tailwind（daisyUI 任意）（選定: Codex、セットアップ: Claude）
-- [ ] 状態管理（Context または Zustand）（選定: Codex、実装: Claude）
+- [x] 状態管理: React Context + useReducer（最小依存）（選定: Codex、実装: Claude）
 - [ ] AJV によるスキーマ検証の導入（担当: Claude）
   
 ### TODO（実装ガイド）
 - [x] ページ構成: `/` 一覧、`/company/[id]` 詳細（担当: Codex）
 - [x] コンポーネント粒度: EvidenceCard/DecisionControls/Filters/Toolbar（担当: Codex）
-- [ ] 仮API: `/api/review` GET/POST（ローカル限定・CORS無効）（担当: Claude）
 - [x] スタイル: Tailwind基調、ダークモード任意（将来）（担当: Claude）
 
 ## TODO（ユースケース）
@@ -32,8 +31,8 @@
 - [ ] 一覧: 並び替え（会社名/score/更新日時）（仕様: Codex、実装: Claude）
 - [x] 詳細: 証跡カード（URL/タイトル/抜粋/score/source_type/取得日時/方法/HTTP ステータス）（仕様: Codex、実装: Claude）
 - [x] 詳細: 決定入力（decision/override_value/note）（仕様: Codex、実装: Claude）
-- [ ] 共通: 未保存ガード（遷移/クローズ時警告）（仕様: Codex、実装: Claude）
-- [x] 共通: ツールバー（保存/ダウンロード/インポート）（仕様: Codex、実装: Claude）
+- [-] 共通: 未保存ガード（最小フェーズでは除外）（仕様: Codex）
+- [ ] 共通: ツールバー（保存のみ。ダウンロード/インポートは除外）（仕様: Codex、実装: Claude）
   
 ### TODO（フィルタ仕様・並び替え詳細）
 - [ ] 状態フィルタ: ok/ng/unknown/未判定のみ（複数選択可・デフォルト=全て）（担当: Codex）
@@ -50,46 +49,39 @@
 
 ## TODO（データ I/F）
 - [x] 入力: `review.json` を読み込み（required: generated_at, companies[], evidence[], review_state[]）（担当: Codex）
-- [x] 読み込み経路: `public/review.json` または `GET /api/review`（担当: Codex）
-- [x] 保存経路: JSON ダウンロード または `POST /api/review`（ローカル限定）（担当: Claude）
+- [x] 読み込み経路: `public/review.json`（静的ファイル）（担当: Codex）
 - [ ] バリデーション: `ajv` によるスキーマ検証（エラー可視化）（担当: Claude）
+- [ ] ローカル保存: 保存ボタンで `localStorage` に書き込み（自動保存なし）（担当: Claude）
+- [ ] 復元: 初期ロード時に `localStorage` を読み込み（キーがあれば）（担当: Claude）
   
 ### TODO（データマッピング・整合性）
 - [x] UIモデル←→スキーマのマッピング表を作成（company/evidence/review_state）（担当: Codex）
 - [ ] null/未定義の扱いを定義（override_value/note/score等）（担当: Codex）
 - [ ] evidenceの最新/代表選定ロジック（score降順/時刻/優先source_type）（仕様: Codex、実装: Claude）
 - [x] `decided_at` は保存時にクライアントで付与（ISO 8601）（仕様: Codex、実装: Claude）
-- [x] JSONインポート: `<input type=\"file\">` から `review.json` を読み込み可能に（ドラッグ&ドロップ対応）（担当: Claude）
 
 ## TODO（機能）
-- [ ] 検索/フィルタ/ソート（URLクエリで状態共有）（担当: Claude）
-- [ ] 編集（decision/override_value/note）と 1 段階の Undo（担当: Claude）
+- [ ] 検索/フィルタ/ソート（URLクエリ共有は任意）（担当: Claude）
+- [ ] 編集（decision/override_value/note）と 1 段階の Undo は任意（最小では省略可）（担当: Claude）
 - [x] 保存時に `review_state` を更新し `decided_at` を ISO 8601 付与（担当: Claude）
-- [x] エクスポート: レビュー済みのみ CSV（companies + 最終決定）（担当: Claude）
+- [-] エクスポート: レビュー済みのみ CSV（本フェーズでは削除）
 - [ ] 差分ハイライト（任意、直前 bundle との比較）（担当: Claude）
   
 ### TODO（CSVエクスポート仕様）
-- [ ] 列定義（固定）: company_id, company_name, decision, override_value, final_value, note, source_url, confidence_score, extraction_method, decided_at（担当: Codex）
-- [ ] 並び順: company_id 昇順（担当: Codex）
-- [ ] 文字コード: UTF-8（BOMなし）（担当: Codex）
-- [ ] 小数/NULLの表現ルールを定義（担当: Codex）
+- 本フェーズ対象外（将来の拡張用に仕様書は保持）
 
 ### TODO（状態管理/保存）
-- [ ] ローカルドラフト（localStorage）に自動保存（5秒おき・軽量差分）（担当: Claude）
-- [ ] ドラフトの復元/破棄UI（担当: Claude）
-- [ ] 未保存変更の件数表示（ヘッダーにアイコン）（担当: Claude）
-- [ ] 変更履歴は1段階Undoのみ（再読み込みで破棄）（担当: Claude）
+- [ ] ローカル保存: 保存ボタンで `localStorage` へ書き込み（自動保存なし）（担当: Claude）
+- [ ] 復元: 初期ロード時に `localStorage` を読み込み（キーがあれば）（担当: Claude）
+- [-] 未保存件数アイコン/未保存ガード/履歴Undo（最小フェーズでは除外）
 
  
 
 ## TODO（エラー/例外）
 - [ ] スキーマ不一致時の詳細表示と読込中断、サンプル JSON への導線（担当: Claude）
 - [ ] 破損/空ファイル時の明示エラーとリトライ動線（担当: Claude）
-- [ ] 保存失敗（API）の理由表示・再試行・JSON ダウンロード代替（担当: Claude）
   
 ### TODO（エラーパターン詳細）
-- [ ] ネットワーク不通（API読込/保存）: リトライ/オフライン保存誘導（担当: Codex）
-- [ ] CORSブロック: エラーメッセージとローカル限定の注記（担当: Codex）
 - [ ] JSON解析失敗/文字化け: ファイル情報と再読込導線（担当: Codex）
 - [ ] 例外ハンドラ（Error Boundary）でUI崩壊を防止（担当: Claude）
 
@@ -97,34 +89,27 @@
 
 ## TODO（連携フロー）
 - [x] CLI: `poc bundle` で `output/review/review.json` 生成（担当: Codex）
-- [x] Frontend: `public/review.json` 配置 or `GET /api/review` 実装（担当: Claude）
-- [ ] UI レビュー→保存（ダウンロード or `POST /api/review`）（担当: ユーザー／Claude）
-- [ ] CLI: `poc import --review` → `export --final`（importは未実装、export --finalは実装済み）（担当: Claude）
+- [x] Frontend: `public/review.json` を静的読込（担当: Claude）
+- [ ] UI レビュー→保存（localStorage へ保存）（担当: ユーザー／Claude）
 
 ## TODO（受入基準）
-- [ ] スキーマ適合（読込時に検証合格）（担当: Codex）
+- [ ] スキーマ適合（読込/保存時にAJV合格）（担当: Codex）
 - [ ] 基本フロー（一覧/詳細/編集/保存）がローカルで完結（担当: Codex）
-- [ ] 出力 CSV が CLI `export --final` と一致（同一入力）（担当: Codex）
-- [ ] 未保存ガードとショートカットが有効（担当: Codex）
   
 ### TODO（受入シナリオの詳細）
 - [ ] サンプル `review.json`（10社/100evidence相当）で一覧が2秒以内に描画（担当: Codex）
 - [ ] フィルタ: unknownのみ + score>=0.8 + source_type=official で結果が即時反映（担当: Codex）
-- [ ] 詳細で decision=ok + override=1234 + note 入力→保存→CSVに反映（担当: Codex）
-- [ ] ブラウザ更新後もドラフト復元が可能（未保存時）（担当: Codex）
-- [ ] JSON手動インポート→一覧/詳細に即時反映（AJV合格）（担当: Codex）
+- [ ] 詳細で decision=ok + override=1234 + note 入力→保存→一覧・詳細に反映（担当: Codex）
 
 ## TODO（マイルストーン）
-- [ ] M1: 静的読込 + 一覧/詳細表示 + JSON ダウンロード保存（担当: Codex） [#23](https://github.com/ryosuke-horie/poc-employee-scope/issues/23)
-- [ ] M2: 検索/フィルタ/ソート + スキーマ検証 + 未保存ガード（担当: Codex） [#24](https://github.com/ryosuke-horie/poc-employee-scope/issues/24)
-- [ ] M3: API 入出力（ローカル）+ CSV エクスポート（担当: Codex） [#25](https://github.com/ryosuke-horie/poc-employee-scope/issues/25)
-- [ ] M4: 使い勝手調整（ショートカット/差分/パフォーマンス）（担当: Codex）
+- [ ] M1: 静的読込 + 一覧/詳細表示 + ローカル保存（JSONダウンロード無し）（担当: Codex）
+- [ ] M2: 検索/フィルタ/ソート + スキーマ検証（AJV）（担当: Codex）
+- [ ] M3: 使い勝手調整（ショートカット任意/軽微な性能調整）（担当: Codex）
   
 ### TODO（成果物の明確化）
 - [ ] M1 成果: `/public/review.json` 想定のスタブとUIワイヤーフレーム（担当: Codex）
 - [ ] M2 成果: AJV検証ログとフィルタ仕様ドキュメント（担当: Codex）
-- [ ] M3 成果: CSVサンプル（10行）とAPIモック（担当: Codex）
-- [ ] M4 成果: パフォーマンス計測結果（Lighthouse or 手計測）（担当: Codex）
+- [ ] M3 成果: パフォーマンス計測結果（Lighthouse or 手計測）（担当: Codex）
 
 ## TODO（ドキュメント/レビュー）
 - [ ] `docs/frontend/design.md` と本 TODO の整合性を維持（担当: Codex）
@@ -133,5 +118,10 @@
   
 ### TODO（追補ドキュメント）
 - [x] UIデータマッピング表（schema→UI）: `docs/frontend/ui-data-mapping.md`（担当: Codex）
-- [x] CSVエクスポート仕様書（列/型/例）: `docs/frontend/csv-export-spec.md`（担当: Codex）
+- [x] CSVエクスポート仕様書（列/型/例）: `docs/frontend/csv-export-spec.md`（本フェーズ対象外／将来拡張用、担当: Codex）
 - [ ] キーボード操作一覧とアクセシビリティ方針の明文化（担当: Codex）
+
+## 非スコープ（明記）
+- レスポンシブ対応、Chrome以外のブラウザ、アクセシビリティ強化
+- エクスポート（CSV/JSON）、インポート、自動保存、未保存ガード
+- 認証、複数人同時編集、サーバ保存、暗号化

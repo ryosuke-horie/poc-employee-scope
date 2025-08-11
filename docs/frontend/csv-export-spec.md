@@ -1,5 +1,7 @@
 # CSVエクスポート仕様（フロントエンド）
 
+注記: 本フェーズ対象外。将来の拡張用に保持。
+
 目的: フロントエンドから出力するCSVの列・型・意味を定義し、CLIの最終CSV（`export --final`）と整合させる。
 
 参照:
@@ -56,4 +58,3 @@ company_name,employee_count,decision,note,source_url,confidence_score,extraction
 ## 今後の拡張
 - 列のローカライズ（ヘッダ日本語/英語切替）
 - TSVやExcel出力（将来）
-

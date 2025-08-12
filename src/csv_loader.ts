@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import { parse } from 'csv-parse/sync';
 import { logger } from './logger.js';
+import { sanitizeUrl } from './utils.js';
 
 export interface CompanyData {
   id: number;
@@ -102,9 +103,16 @@ export async function loadUrls(filePath: string): Promise<UrlData[]> {
         continue;
       }
       
+      // URL 正規化（末尾スラッシュやフラグメントの除去など）
+      const normalizedUrl = sanitizeUrl(record.url);
+      if (!normalizedUrl) {
+        logger.warn(`正規化後に無効となったURLをスキップ: ${record.url}`);
+        continue;
+      }
+
       urls.push({
         company_id: company_id,
-        url: record.url.trim(),
+        url: normalizedUrl,
         source_type: record.source_type || 'other',
         priority: isNaN(priority) ? 99 : priority,
       });

@@ -85,7 +85,7 @@ export default function CompanyList({ companies }: CompanyListProps) {
                   )}
                 </div>
 
-                {company.reviewState?.override_value !== null && (
+                {company.reviewState?.override_value !== null && company.reviewState?.override_value !== undefined && (
                   <div className="mt-2 inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded">
                     <span className="font-medium">上書き値:</span>
                     <span>{company.reviewState.override_value.toLocaleString()}人</span>

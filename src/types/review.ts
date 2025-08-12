@@ -5,23 +5,19 @@
 export interface Company {
   id: number;
   name: string;
-  url: string;
 }
 
 export interface Evidence {
   company_id: number;
   source_url: string;
-  source_type: string;
+  source_type?: string;
   value: number | null;
   raw_text: string;
-  extraction_method: string;
   model: string | null;
   score: number | null;
-  title: string | null;
-  fetched_at: string;
+  page_title: string | null;
   extracted_at: string;
   status_code: number | null;
-  error: string | null;
   snippet_start: number | null;
   snippet_end: number | null;
 }

@@ -36,6 +36,9 @@ CLIで収集/抽出/保存/エクスポートを担う。OpenRouter専用・Play
 - [ ] 受入: `npm run start -- --help` と `docs/*` のオプション記載が一致（担当: Codex）
 
 ## TODO（取得/抽出）
+- [ ] URL正規化（最優先）: 末尾スラッシュ除去とカノニカル再取得フォールバック（担当: Claude）
+  - 受入: `.../profile.html/` のようなURLで 404 の場合、自動的に末尾スラッシュを外して再試行し、成功すれば抽出まで到達すること
+  - 受入: `<link rel="canonical">` が存在する場合はカノニカルURLで再取得して抽出を継続すること
 - [x] Playwright 環境変数化（`REQUEST_TIMEOUT_MS`, `USER_AGENT`, `NAV_WAIT_MS`）（担当: Claude）
 - [x] 抽出スニペットを `raw_text` に格納（マッチ周辺 N 文字 + 近傍要素）（担当: Claude）
 - [x] priority フォールバック結果を詳細ログ化（担当: Claude）

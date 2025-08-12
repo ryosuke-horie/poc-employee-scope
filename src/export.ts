@@ -15,8 +15,7 @@ export async function generateReviewBundle(): Promise<ReviewBundle> {
   const companies = db.getAllCompanies();
   const companiesData: Company[] = companies.map(c => ({
     id: c.id!,
-    name: c.name,
-    url: '' // URLは証跡から取得するため、一旦空文字
+    name: c.name
   }));
   
   // 証跡データの取得
@@ -27,14 +26,12 @@ export async function generateReviewBundle(): Promise<ReviewBundle> {
     source_type: e.source_type || 'web',
     value: e.value,
     raw_text: e.raw_text || '',
-    extraction_method: e.model ? 'llm' : (e.value !== null ? 'regex' : 'failed'),
     model: e.model || null,
     score: e.score || null,
-    title: e.page_title || null,
-    fetched_at: e.fetched_at || new Date().toISOString(),
-    extracted_at: e.extracted_at || new Date().toISOString(),
+    page_title: e.page_title || null,
+    // extracted_atをISO 8601形式に変換
+    extracted_at: e.extracted_at ? new Date(e.extracted_at).toISOString() : new Date().toISOString(),
     status_code: e.status_code || null,
-    error: e.error_summary || null,
     snippet_start: e.snippet_start || null,
     snippet_end: e.snippet_end || null,
   }));

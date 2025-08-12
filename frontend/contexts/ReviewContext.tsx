@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { ReviewBundle, ReviewState, Company, Evidence } from '@/types/review';
-import { detectDifferences, ReviewDiff } from '@/lib/diff';
 
 // アクションタイプ
 type ReviewAction =
@@ -10,19 +9,14 @@ type ReviewAction =
   | { type: 'UPDATE_REVIEW_STATE'; companyId: number; reviewState: ReviewState }
   | { type: 'SET_LOADING'; loading: boolean }
   | { type: 'SET_ERROR'; error: string | null }
-  | { type: 'SET_PREVIOUS_DATA'; payload: ReviewBundle | null }
-  | { type: 'TOGGLE_DIFF_MODE' }
   | { type: 'RESET' };
 
 // ステートの型定義
 interface ReviewContextState {
   reviewData: ReviewBundle | null;
-  previousData: ReviewBundle | null;
   loading: boolean;
   error: string | null;
   hasUnsavedChanges: boolean;
-  diffMode: boolean;
-  diff: ReviewDiff | null;
 }
 
 // Contextの型定義
@@ -30,9 +24,7 @@ interface ReviewContextValue extends ReviewContextState {
   dispatch: React.Dispatch<ReviewAction>;
   updateReviewState: (companyId: number, reviewState: Partial<ReviewState>) => void;
   saveToLocalStorage: () => void;
-  loadFromLocalStorage: () => boolean;
-  loadPreviousData: () => void;
-  toggleDiffMode: () => void;
+  loadFromLocalStorage: () => void;
   getBestEvidence: (companyId: number) => Evidence | undefined;
   getCompanyWithReview: (companyId: number) => {
     company: Company | undefined;
@@ -45,26 +37,20 @@ interface ReviewContextValue extends ReviewContextState {
 // 初期状態
 const initialState: ReviewContextState = {
   reviewData: null,
-  previousData: null,
   loading: false,
   error: null,
   hasUnsavedChanges: false,
-  diffMode: false,
-  diff: null,
 };
 
 // Reducer
 function reviewReducer(state: ReviewContextState, action: ReviewAction): ReviewContextState {
   switch (action.type) {
-    case 'SET_DATA': {
-      const diff = state.previousData ? detectDifferences(state.previousData, action.payload) : null;
+    case 'SET_DATA':
       return {
         ...state,
         reviewData: action.payload,
-        diff,
         error: null,
       };
-    }
     
     case 'UPDATE_REVIEW_STATE': {
       if (!state.reviewData) return state;
@@ -96,20 +82,6 @@ function reviewReducer(state: ReviewContextState, action: ReviewAction): ReviewC
     
     case 'SET_ERROR':
       return { ...state, error: action.error, loading: false };
-    
-    case 'SET_PREVIOUS_DATA': {
-      const diff = state.reviewData && action.payload 
-        ? detectDifferences(action.payload, state.reviewData) 
-        : null;
-      return { 
-        ...state, 
-        previousData: action.payload,
-        diff,
-      };
-    }
-    
-    case 'TOGGLE_DIFF_MODE':
-      return { ...state, diffMode: !state.diffMode };
     
     case 'RESET':
       return initialState;
@@ -153,24 +125,6 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
       console.error('Failed to load from localStorage:', error);
       return false;
     }
-  };
-
-  // 前回データの読み込み
-  const loadPreviousData = () => {
-    try {
-      const saved = localStorage.getItem('review_state_previous');
-      if (saved) {
-        const data = JSON.parse(saved) as ReviewBundle;
-        dispatch({ type: 'SET_PREVIOUS_DATA', payload: data });
-      }
-    } catch (error) {
-      console.error('Failed to load previous data from localStorage:', error);
-    }
-  };
-
-  // 差分モードの切り替え
-  const toggleDiffMode = () => {
-    dispatch({ type: 'TOGGLE_DIFF_MODE' });
   };
 
   // レビュー状態の更新
@@ -232,8 +186,6 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
     updateReviewState,
     saveToLocalStorage,
     loadFromLocalStorage,
-    loadPreviousData,
-    toggleDiffMode,
     getBestEvidence,
     getCompanyWithReview,
   };

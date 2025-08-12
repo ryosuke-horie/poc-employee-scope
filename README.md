@@ -1,9 +1,22 @@
 # poc-employee-scope
 
-企業従業員数自動取得PoCの設計・仕様ドキュメントを管理するリポジトリです。
+企業従業員数自動取得PoCの設計・仕様ドキュメントを管理するディレクトリです。
 
- - 新規参加者は [docs/manual/onboarding.md](docs/manual/onboarding.md) を参照してください
- - 詳細な要件と設計は [docs/](docs) 以下にまとめています
+- 詳細な要件と設計は [docs/](docs) 以下にまとめています
+
+## ワークフロー概要
+
+```mermaid
+flowchart LR
+  A[企業・URL CSV\ncompanies.csv / urls.csv] --> B[CLI: ページ取得\nPlaywrightでHTML/テキスト化]
+  B --> C[CLI: 従業員数抽出\n正規表現 → LLMフォールバック]
+  C --> D[証跡保存\nDBへ: 値/根拠/URL/時刻]
+  D --> E[エクスポート\nreview.json / CSV]
+  E --> F[フロントエンド\nreview.jsonを読み込み]
+  F --> G[レビュー\nOK/NG/不明・上書き値・メモ]
+  G --> H[インポート\nreview.json → DB反映]
+  H --> I[最終CSV出力\noverride優先で確定値]
+```
 
 ## 実装状況（サマリ）
 
@@ -21,43 +34,36 @@
 - [ ] `data/urls.csv` の静的検証（重複/priority/ドメイン）
 - [ ] ドキュメント同期（README/ヘルプ/運用手順の完全整合）
 
-## 使い方（エンドツーエンド）
+## データの用意
 
-目的: DBを初期化 → データ取得 → レビュー用バンドル生成 → フロントエンドでレビュー → 最終CSV出力までの最短手順。
+- `data/companies.csv` と `data/urls.csv` を編集（サンプルあり）
+- 例（正規化済みURLの例を推奨）:
+  - `data/companies.csv`: `1,三菱UFJ銀行`
+  - `data/urls.csv`: `1,https://www.bk.mufg.jp/kigyou/profile.html,official,1`
 
-前提
-- Node.js 22 以上
-- OpenRouter API キー（取得: https://openrouter.ai/keys）
-- ブラウザ（最新 Chrome）
+## 実行手順（上から順に実行）
 
-セットアップ（初回のみ）
-```bash
-# 1) 依存関係のインストール（ルート）
-npm install
-
-# 2) .env を作成し API キーを設定
-cp .env.example .env
-${EDITOR:-vi} .env   # OPENROUTER_API_KEY を設定
-
-# 3) Playwright のブラウザ依存をインストール（失敗時の定番対処）
-npx playwright install
-
-# 4) データベース初期化（テーブル作成）
-npm run migrate
-```
-
-データベースのリセット（再初期化したい場合）
-```bash
-# 既存の DB ファイルを削除して、空の状態から再作成
-npm run db:reinit    # = rimraf data/companies.db && npm run migrate
-
-# もしくは手動で:
-# rm data/companies.db && npm run migrate
-```
 注意: DBを削除すると、保存済みの証跡・レビュー状態は失われます。
 
-データの用意（サンプル同梱、任意で編集）
-- `data/companies.csv` と `data/urls.csv` を確認・編集（初期サンプルあり）
+```bash
+# 1) DBを一度まっさらにして作り直す
+npm run db:reinit
+
+# 2) 収集と抽出を実行（CSV指定と並列数は適宜）
+npm run start -- --companies data/companies.csv --urls data/urls.csv --parallel 3
+
+# 3) レビュー用のバンドルを生成（review.json / CSV）
+npm run export               # review.json を output/review/ に生成
+npm run export -- --format csv
+
+# 4) フロントエンドでレビュー（任意）
+cd frontend && npm run dev  # http://localhost:4444 を開く
+
+# 5) レビュー結果を取り込み、最終CSVを確定
+cd ..
+npm run start:extended -- import --review output/review/review.json
+npm run start:extended -- export --final --output output/final.csv
+```
 
 ## データソース（CSVとURL）
 
@@ -75,81 +81,19 @@ npm run db:reinit    # = rimraf data/companies.db && npm run migrate
 - 三菱UFJ銀行 会社概要: `https://www.bk.mufg.jp/kigyou/profile.html`
   - ページ内に「従業員数 31,756名（2024年3月末現在、単体）」の記載を確認（2025-08-12取得）
 
-データ取得（スクレイピング＋抽出）
-```bash
-# デフォルト設定で実行（data/companies.csv と data/urls.csv を使用）
-npm run start
+## LLMの利用条件と役割
 
-# CSV を指定し、並列数（例: 5）で取得
-npm run start -- --companies data/companies.csv --urls data/urls.csv --parallel 5
+- 役割: 正規表現で従業員数を抽出できない、または低信頼な場合の補助。
+- 起動条件:
+  - 正規表現の候補が見つからない、または閾値未満の信頼度のときにフォールバック。
+  - 入力は従業員数に関連するテキストへ事前フィルタし、最大長を制限（`MAX_TEXT_LENGTH_FOR_LLM`）。
+- 送信内容: 抽出対象ページからのテキスト断片（スニペット）。機密情報やトークンは送信しない。
+- モデル/接続: OpenRouter経由（モデルは `.env` の `OPENROUTER_MODEL_ID`）。
+- タイムアウト/再試行: `REQUEST_TIMEOUT_MS` とリトライ設定に従う。失敗時はログに理由を記録。
+- 出力の扱い: 数値をパースし、範囲チェック（1〜1,000万）。正規表現結果より低品質の場合は採用しない。
+- ログ/証跡: 採用値・根拠スニペット・信頼度・抽出方法（regex|llm）を保存/出力。
 
-# ヘルプ（オプション一覧）
-npm run start -- --help
-```
-
-レビュー用バンドルの生成（review.json）
-```bash
-# review.json を生成（自動で frontend/public/review.json へコピー）
-npm run export
-
-# CSVフォーマットでエクスポート
-npm run export -- --format csv
-
-# カスタムパスに出力
-npm run export -- --output custom/path/review.json
-```
-
-フロントエンドでレビュー（ローカル UI）
-```bash
-cd frontend
-npm install
-npm run dev   # http://localhost:4444 を開く（ポート固定）
-```
-- 一覧/詳細を確認し、OK/NG/不明・上書き値・メモを入力
-- 画面上部の「保存」でブラウザの `localStorage` に保存（自動保存なし）
-- AJV によるスキーマ検証は読込/保存前に実行（エラーバナー表示）
-- フィルタ機能：状態（OK/NG/不明）、スコア範囲、ソースタイプで絞り込み可能
-
-最終CSVの出力（現在未実装）
-```bash
-# 将来実装予定：レビュー結果を反映したCSVエクスポート
-# npm run export -- --format csv --include-review
-```
-注意
-- 現行バージョンではフロントエンドは `localStorage` 保存のみ
-- レビュー結果の取り込み機能（import）は今後実装予定
-- 差分表示機能は基本実装済みだが、現在は無効化中
-
-## ワークフロー（CLI抽出 → 人手レビュー）
-
-全体像をエンジニア以外にも伝わる形で図示します（Mermaid）。
-
-```mermaid
-flowchart LR
-  A[企業・URL CSV
-  companies.csv / urls.csv] --> B[CLI: ページ取得
-  PlaywrightでHTML/テキスト化]
-  B --> C[CLI: 従業員数抽出
-  正規表現 → LLMフォールバック]
-  C --> D[証跡保存
-  DBへ: 値/根拠/URL/時刻]
-  D --> E[エクスポート
-  review.json / CSV]
-  E --> F[フロントエンド
-  review.jsonを読み込み]
-  F --> G[人手レビュー
-  OK/NG/不明・上書き値・メモ]
-  G --> H[インポート
-  review.json → DB反映]
-  H --> I[最終CSV出力
-  override優先で確定値]
-```
-
-ポイント
-- まずCLIがURL候補を優先度順に取得し、テキストから自動抽出します。
-- 抽出の信頼度や根拠（スニペット）を証跡として保存・出力します。
-- フロントエンドで人が確認・判断し、必要に応じて上書き値を入力します。
-- 最終的にレビュー結果を取り込み、最終CSVを確定出力します。
+<!-- ワークフローの詳細説明は上部「ワークフロー概要」と重複するため省略 -->
 
 ## CLI コマンド一覧
 

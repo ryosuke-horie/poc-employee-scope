@@ -140,21 +140,21 @@ export function errorToString(error: unknown): string {
  */
 export function sanitizeUrl(url: string | null | undefined): string {
   if (!url) return '';
-  
+
   try {
     const trimmed = url.trim();
+    // 妥当性チェックだけURLで行う（Unicodeドメインを保持するため再構築はしない）
     const urlObj = new URL(trimmed);
-    
-    // フラグメントを削除
-    urlObj.hash = '';
-    
-    let result = urlObj.toString();
-    
-    // 末尾のスラッシュを削除
-    if (result.endsWith('/')) {
+
+    // フラグメント（#以降）を除去（元文字列から）
+    let result = trimmed.replace(/#.*$/, '');
+
+    // 末尾のスラッシュを削除（プロトコルの // は保持）
+    const minLength = urlObj.protocol.length + 2; // e.g., 'https://'
+    if (result.length > minLength && result.endsWith('/')) {
       result = result.slice(0, -1);
     }
-    
+
     return result;
   } catch {
     return '';

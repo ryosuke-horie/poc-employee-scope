@@ -45,59 +45,153 @@ npm run db:reinit    # = rimraf data/companies.db && npm run migrate
 
 データ取得（スクレイピング＋抽出）
 ```bash
-# CSV を指定し、並列数（例: 3）で取得
-npm run start -- extract --companies data/companies.csv --urls data/urls.csv --parallel 3
+# デフォルト設定で実行（data/companies.csv と data/urls.csv を使用）
+npm run start
+
+# CSV を指定し、並列数（例: 5）で取得
+npm run start -- --companies data/companies.csv --urls data/urls.csv --parallel 5
 
 # ヘルプ（オプション一覧）
-npm run start -- help
+npm run start -- --help
 ```
 
-レビュー用バンドルの生成（review.json + 最小 index.html）
+レビュー用バンドルの生成（review.json）
 ```bash
-# 出力先（例: output/）配下に output/review/review.json 等を生成
-npm run start -- bundle --output output/
+# review.json を生成（自動で frontend/public/review.json へコピー）
+npm run export
 
-# frontend/ が存在する場合、review.json を自動で frontend/public/review.json へコピー
-# （環境変数 COPY_TO_FRONTEND=false でコピー抑止）
+# CSVフォーマットでエクスポート
+npm run export -- --format csv
+
+# カスタムパスに出力
+npm run export -- --output custom/path/review.json
 ```
 
 フロントエンドでレビュー（ローカル UI）
 ```bash
 cd frontend
 npm install
-npm run dev   # http://localhost:4444 を開く
+npm run dev   # http://localhost:4444 を開く（ポート固定）
 ```
 - 一覧/詳細を確認し、OK/NG/不明・上書き値・メモを入力
 - 画面上部の「保存」でブラウザの `localStorage` に保存（自動保存なし）
 - AJV によるスキーマ検証は読込/保存前に実行（エラーバナー表示）
+- フィルタ機能：状態（OK/NG/不明）、スコア範囲、ソースタイプで絞り込み可能
 
-最終CSVの出力（レビューを反映）
+最終CSVの出力（現在未実装）
 ```bash
-# 方式A: レビューJSONを DB へ取り込み → 最終CSV
-npm run start -- import --review output/review/review.json
-npm run start -- export --final --output output/final.csv
-
-# 方式B: レビューJSONを直接参照して最終CSV（レビューJSONに最新の review_state が含まれる場合）
-npm run start -- export --final --review output/review/review.json --output output/final.csv
+# 将来実装予定：レビュー結果を反映したCSVエクスポート
+# npm run export -- --format csv --include-review
 ```
 注意
-- 現行の最小フェーズではフロントエンドは `localStorage` 保存のみ（ダウンロード/インポートUIは未実装）。
-- 最終CSVにレビュー結果を反映するには、上記「方式A/B」のいずれかで `review_state` を CLI に渡してください。
-  - 暫定運用: `localStorage` の `review_state_v1` をエクスポートし、`review.json` の `review_state` に整形して `import` する（将来はUI側でエクスポート対応予定）。
+- 現行バージョンではフロントエンドは `localStorage` 保存のみ
+- レビュー結果の取り込み機能（import）は今後実装予定
+- 差分表示機能は基本実装済みだが、現在は無効化中
 
-## CLI
+## CLI コマンド一覧
 
-ヘルプは次のコマンドで表示できます:
-
+### データ収集（npm run start）
 ```bash
-OPENROUTER_API_KEY=dummy npm run start -- --help
+npm run start -- --help
 ```
 
-### 主なオプション
-
+主なオプション:
 - `--companies <path>`: 企業リストCSVファイルのパス（デフォルト: `data/companies.csv`）
 - `--urls <path>`: URLリストCSVファイルのパス（デフォルト: `data/urls.csv`）
 - `--output <path>`: 結果出力先のパス（デフォルト: `output/results_[timestamp].csv`）
 - `--parallel <num>`: 並列処理数（デフォルト: 3）
 
-詳細は [docs/cli-commands.md](docs/cli-commands.md) を参照してください
+### エクスポート（npm run export）
+```bash
+npm run export -- --help
+```
+
+主なオプション:
+- `--format <format>`: 出力形式 json|csv（デフォルト: json）
+- `--output <path>`: 出力先ファイルパス
+
+### データベース管理
+```bash
+npm run migrate      # テーブル作成
+npm run db:reset     # データベース削除
+npm run db:reinit    # 削除して再作成
+```
+
+## プロジェクト構成
+
+```
+poc-employee-scope/
+├── src/                   # CLI ソースコード
+│   ├── index.ts          # メインエントリーポイント
+│   ├── cli-export.ts     # エクスポートコマンド
+│   ├── export.ts         # エクスポート処理
+│   ├── db.ts             # データベース操作
+│   ├── fetcher.ts        # Playwright スクレイピング
+│   ├── extractor_*.ts    # 抽出処理（正規表現/LLM）
+│   └── types/            # 型定義
+├── frontend/             # レビューUI（Next.js）
+│   ├── app/              # App Router
+│   ├── components/       # UIコンポーネント
+│   ├── lib/              # ユーティリティ
+│   └── public/           # 静的ファイル（review.json配置先）
+├── data/                 # データファイル
+│   ├── companies.csv     # 企業リスト
+│   ├── urls.csv          # URLリスト  
+│   └── companies.db      # SQLiteデータベース
+├── output/               # 出力ディレクトリ
+│   └── review/           # review.json出力先
+└── docs/                 # ドキュメント
+
+```
+
+## 技術スタック
+
+### バックエンド（CLI）
+- **言語**: TypeScript (Node.js 22+)
+- **データベース**: SQLite (better-sqlite3)
+- **スクレイピング**: Playwright
+- **HTMLパース**: cheerio
+- **LLM連携**: OpenRouter API
+
+### フロントエンド
+- **フレームワーク**: Next.js 15 (App Router)
+- **言語**: TypeScript
+- **スタイル**: Tailwind CSS
+- **状態管理**: React Context + useReducer
+- **スキーマ検証**: AJV
+
+## 環境変数
+
+`.env`ファイルに以下を設定:
+
+```bash
+# 必須
+OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxx
+
+# オプション（デフォルト値あり）
+OPENROUTER_MODEL_ID=meta-llama/llama-3.1-8b-instruct
+MAX_CONCURRENT_REQUESTS=3
+REQUEST_TIMEOUT_MS=30000
+MAX_TEXT_LENGTH_FOR_LLM=10000
+```
+
+## トラブルシューティング
+
+### Playwrightのエラー
+```bash
+npx playwright install
+```
+
+### データベースのリセット
+```bash
+npm run db:reinit
+```
+
+### フロントエンドが表示されない
+1. `npm run export`でreview.jsonを生成
+2. ブラウザキャッシュをクリア
+3. http://localhost:4444 にアクセス
+
+## ライセンス
+
+MIT

@@ -14,13 +14,17 @@
     "dev": "tsx src/index.ts",
     "dev:extended": "tsx src/index_extended.ts",
     "clean": "rimraf dist",
+    "db:reset": "rimraf data/companies.db",
+    "db:reinit": "npm run db:reset && npm run migrate",
     "migrate": "tsx src/migrate.ts",
     "test": "vitest",
     "test:run": "vitest run",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.ts\"",
-    "poc": "npm run build && node dist/index_extended.js"
+    "poc": "npm run build && node dist/index_extended.js",
+    "export": "npm run build && node dist/cli-export.js",
+    "export:dev": "tsx src/cli-export.ts"
   },
   "keywords": [
     "scraping",

@@ -336,6 +336,26 @@ class DatabaseManager {
   }
   
   /**
+   * すべての企業を取得
+   */
+  getAllCompanies(): Company[] {
+    if (!this.db) throw new Error('データベースが初期化されていません');
+    
+    const stmt = this.db.prepare('SELECT id, name FROM companies ORDER BY id');
+    return stmt.all() as Company[];
+  }
+  
+  /**
+   * 企業を取得
+   */
+  getCompany(companyId: number): Company | null {
+    if (!this.db) throw new Error('データベースが初期化されていません');
+    
+    const stmt = this.db.prepare('SELECT id, name FROM companies WHERE id = ?');
+    return stmt.get(companyId) as Company | null;
+  }
+  
+  /**
    * 統計情報を取得
    */
   getStatistics(): { companies: number; evidence: number; successful: number; reviewed: number } {

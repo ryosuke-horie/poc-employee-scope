@@ -30,6 +30,16 @@ npx playwright install
 npm run migrate
 ```
 
+データベースのリセット（再初期化したい場合）
+```bash
+# 既存の DB ファイルを削除して、空の状態から再作成
+npm run db:reinit    # = rimraf data/companies.db && npm run migrate
+
+# もしくは手動で:
+# rm data/companies.db && npm run migrate
+```
+注意: DBを削除すると、保存済みの証跡・レビュー状態は失われます。
+
 データの用意（サンプル同梱、任意で編集）
 - `data/companies.csv` と `data/urls.csv` を確認・編集（初期サンプルあり）
 

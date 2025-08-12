@@ -6,7 +6,7 @@ import { ensureDirectory } from './utils.js';
 
 /**
  * データベースマイグレーション
- * 既存のテーブルに review_state テーブルを追加
+ * 全テーブルを作成または更新
  */
 async function migrate() {
   try {
@@ -17,21 +17,41 @@ async function migrate() {
     const db = new Database(config.dbPath);
     logger.info(`データベースに接続しました: ${config.dbPath}`);
     
-    // 現在のスキーマをチェック
-    const tables = db.prepare(`
-      SELECT name FROM sqlite_master 
-      WHERE type='table' AND name='review_state'
-    `).all();
+    // companiesテーブルを作成
+    logger.info('companies テーブルを作成します...');
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS companies (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE NOT NULL
+      )
+    `);
     
-    if (tables.length > 0) {
-      logger.info('review_state テーブルは既に存在します');
-      db.close();
-      return;
-    }
+    // evidenceテーブルを作成
+    logger.info('evidence テーブルを作成します...');
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS evidence (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        company_id INTEGER NOT NULL,
+        value INTEGER,
+        raw_text TEXT,
+        source_url TEXT,
+        source_type TEXT CHECK(source_type IN ('web', 'api', 'manual')),
+        source_date TEXT,
+        score REAL,
+        model TEXT,
+        extracted_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        page_title TEXT,
+        status_code INTEGER,
+        fetched_at TEXT,
+        snippet_start INTEGER,
+        snippet_end INTEGER,
+        error_summary TEXT,
+        FOREIGN KEY (company_id) REFERENCES companies(id)
+      )
+    `);
     
     // review_stateテーブルを作成
     logger.info('review_state テーブルを作成します...');
-    
     db.exec(`
       CREATE TABLE IF NOT EXISTS review_state (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,11 +65,13 @@ async function migrate() {
     `);
     
     // インデックスを作成
+    logger.info('インデックスを作成します...');
     db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_evidence_company_id ON evidence(company_id);
       CREATE INDEX IF NOT EXISTS idx_review_state_company_id ON review_state(company_id);
     `);
     
-    logger.info('review_state テーブルを作成しました');
+    logger.info('全テーブルを作成しました');
     
     // 統計情報を表示
     const stats = {

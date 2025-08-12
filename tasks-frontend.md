@@ -104,7 +104,7 @@
 - [x] 編集（decision/override_value/note）と 1 段階の Undo は任意（最小では省略可）（担当: Claude）
 - [x] 保存時に `review_state` を更新し `decided_at` を ISO 8601 付与（担当: Claude）
 - [-] エクスポート: レビュー済みのみ CSV（本フェーズでは削除）
-- [ ] 差分ハイライト（任意、直前 bundle との比較）（担当: Claude）
+- [x] 差分ハイライト（任意、直前 bundle との比較）（担当: Claude）
   
 ### TODO（CSVエクスポート仕様）
 - 本フェーズ対象外（将来の拡張用に仕様書は保持）

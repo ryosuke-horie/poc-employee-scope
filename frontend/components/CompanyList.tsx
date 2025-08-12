@@ -2,12 +2,16 @@
 
 import { CompanyWithReview } from '@/types/review';
 import Link from 'next/link';
+import { useReview } from '@/contexts/ReviewContext';
+import { hasCompanyDiff } from '@/lib/diff';
+import DiffIndicator from './DiffIndicator';
 
 interface CompanyListProps {
   companies: CompanyWithReview[];
 }
 
 export default function CompanyList({ companies }: CompanyListProps) {
+  const { diffMode, diff } = useReview();
   const getDecisionColor = (decision?: string) => {
     switch (decision) {
       case 'ok': return 'bg-green-100 text-green-800 border-green-300';
@@ -36,22 +40,31 @@ export default function CompanyList({ companies }: CompanyListProps) {
 
   return (
     <div className="divide-y divide-gray-200">
-      {companies.map(company => (
-        <Link
-          key={company.id}
-          href={`/company/${company.id}`}
-          className="block hover:bg-gray-50 transition-colors"
-        >
-          <div className="p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {company.name}
-                  </h3>
-                  <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getDecisionColor(company.reviewState?.decision)}`}>
-                    {getDecisionLabel(company.reviewState?.decision)}
-                  </span>
+      {companies.map(company => {
+        const companyDiff = diff?.companies.find(c => c.company_id === company.id);
+        const hasDiff = diffMode && diff && hasCompanyDiff(company.id, diff);
+        
+        return (
+          <Link
+            key={company.id}
+            href={`/company/${company.id}`}
+            className={`block hover:bg-gray-50 transition-colors ${
+              hasDiff ? 'bg-yellow-50' : ''
+            }`}
+          >
+            <div className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {company.name}
+                    </h3>
+                    {diffMode && companyDiff && companyDiff.type !== 'unchanged' && (
+                      <DiffIndicator type={companyDiff.type} />
+                    )}
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getDecisionColor(company.reviewState?.decision)}`}>
+                      {getDecisionLabel(company.reviewState?.decision)}
+                    </span>
                 </div>
                 
                 <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -101,8 +114,9 @@ export default function CompanyList({ companies }: CompanyListProps) {
               </div>
             </div>
           </div>
-        </Link>
-      ))}
+          </Link>
+        );
+      })}
     </div>
   );
 }

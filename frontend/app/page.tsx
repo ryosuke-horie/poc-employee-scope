@@ -9,6 +9,7 @@ import ValidationErrorBanner from '@/components/ValidationErrorBanner';
 import { validateReview } from '@/lib/validation';
 import { ErrorObject } from 'ajv';
 import { CompanyWithReview } from '@/types/review';
+import { generatePreviousDataSample } from '@/lib/generatePreviousData';
 
 export default function HomePage() {
   const { 
@@ -24,6 +25,8 @@ export default function HomePage() {
   
   const [filteredCompanies, setFilteredCompanies] = useState<CompanyWithReview[]>([]);
   const [validationErrors, setValidationErrors] = useState<ErrorObject[]>([]);
+  const [diffMode, setDiffMode] = useState(false);
+  const [previousData, setPreviousData] = useState(null);
 
   // 初回ロード時の処理
   useEffect(() => {

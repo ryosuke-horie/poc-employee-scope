@@ -336,9 +336,10 @@ export async function processCompaniesInParallel(
       logger.info(`処理中 [${index + 1}/${companiesWithUrls.length}]: ${companyWithUrls.company.name}`);
       const result = await processCompany(companyWithUrls);
       
-      // 成功/失敗をログ
+      // 成功/失敗をログ（抽出手法を明示）
       if (result.employee_count !== null) {
-        logger.info(`✓ 完了: ${companyWithUrls.company.name} (${result.employee_count}人)`);
+        const method = result.extraction_method === 'llm' ? 'llm' : 'regex';
+        logger.info(`✓ 完了: ${companyWithUrls.company.name} (${result.employee_count}人) [${method}]`);
       } else {
         logger.warn(`✗ 失敗: ${companyWithUrls.company.name}`);
       }

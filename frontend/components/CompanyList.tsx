@@ -2,16 +2,16 @@
 
 import { CompanyWithReview } from '@/types/review';
 import Link from 'next/link';
-import { useReview } from '@/contexts/ReviewContext';
-import { hasCompanyDiff } from '@/lib/diff';
-import DiffIndicator from './DiffIndicator';
+// import { useReview } from '@/contexts/ReviewContext';
+// import { hasCompanyDiff } from '@/lib/diff';
+// import DiffIndicator from './DiffIndicator';
 
 interface CompanyListProps {
   companies: CompanyWithReview[];
 }
 
 export default function CompanyList({ companies }: CompanyListProps) {
-  const { diffMode, diff } = useReview();
+  // const { diffMode, diff } = useReview();
   const getDecisionColor = (decision?: string) => {
     switch (decision) {
       case 'ok': return 'bg-green-100 text-green-800 border-green-300';
@@ -41,16 +41,14 @@ export default function CompanyList({ companies }: CompanyListProps) {
   return (
     <div className="divide-y divide-gray-200">
       {companies.map(company => {
-        const companyDiff = diff?.companies.find(c => c.company_id === company.id);
-        const hasDiff = diffMode && diff && hasCompanyDiff(company.id, diff);
+        // const companyDiff = diff?.companies.find(c => c.company_id === company.id);
+        // const hasDiff = diffMode && diff && hasCompanyDiff(company.id, diff);
         
         return (
           <Link
             key={company.id}
             href={`/company/${company.id}`}
-            className={`block hover:bg-gray-50 transition-colors ${
-              hasDiff ? 'bg-yellow-50' : ''
-            }`}
+            className="block hover:bg-gray-50 transition-colors"
           >
             <div className="p-6">
               <div className="flex items-start justify-between">
@@ -59,9 +57,9 @@ export default function CompanyList({ companies }: CompanyListProps) {
                     <h3 className="text-lg font-semibold text-gray-900">
                       {company.name}
                     </h3>
-                    {diffMode && companyDiff && companyDiff.type !== 'unchanged' && (
+                    {/* {diffMode && companyDiff && companyDiff.type !== 'unchanged' && (
                       <DiffIndicator type={companyDiff.type} />
-                    )}
+                    )} */}
                     <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getDecisionColor(company.reviewState?.decision)}`}>
                       {getDecisionLabel(company.reviewState?.decision)}
                     </span>

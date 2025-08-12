@@ -1,7 +1,7 @@
 import { Evidence } from '@/types/review';
-import { useReview } from '@/contexts/ReviewContext';
-import { hasEvidenceDiff } from '@/lib/diff';
-import DiffIndicator from './DiffIndicator';
+// import { useReview } from '@/contexts/ReviewContext';
+// import { hasEvidenceDiff } from '@/lib/diff';
+// import DiffIndicator from './DiffIndicator';
 
 interface EvidenceCardProps {
   evidence: Evidence;
@@ -9,7 +9,7 @@ interface EvidenceCardProps {
 }
 
 export default function EvidenceCard({ evidence, index }: EvidenceCardProps) {
-  const { diffMode, diff } = useReview();
+  // const { diffMode, diff } = useReview();
   const sourceTypeLabels: Record<string, string> = {
     official: '公式サイト',
     ir: 'IR情報',
@@ -31,19 +31,17 @@ export default function EvidenceCard({ evidence, index }: EvidenceCardProps) {
   };
 
   const extractionMethod = evidence.model || (evidence.value ? 'regex' : 'failed');
-  const evidenceDiffType = diffMode && diff ? hasEvidenceDiff(evidence.company_id, index, diff) : 'unchanged';
+  // const evidenceDiffType = diffMode && diff ? hasEvidenceDiff(evidence.company_id, index, diff) : 'unchanged';
 
   return (
-    <div className={`bg-white rounded-lg shadow p-6 ${
-      evidenceDiffType !== 'unchanged' ? 'ring-2 ring-yellow-400' : ''
-    }`}>
+    <div className="bg-white rounded-lg shadow p-6">
       <div className="flex justify-between items-start mb-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="text-sm font-medium text-gray-500">証跡 #{index + 1}</span>
-            {evidenceDiffType !== 'unchanged' && (
+            {/* {evidenceDiffType !== 'unchanged' && (
               <DiffIndicator type={evidenceDiffType} />
-            )}
+            )} */}
             <span className="px-2 py-1 text-xs rounded bg-blue-100 text-blue-800">
               {sourceTypeLabels[evidence.source_type] || evidence.source_type}
             </span>

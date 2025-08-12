@@ -149,7 +149,7 @@
 
 ## TODO（マイルストーン）
 - [x] M1: 静的読込 + 一覧/詳細表示 + ローカル保存（JSONダウンロード無し）（担当: Claude）
-- [ ] M2: 検索/フィルタ/ソート + スキーマ検証（AJV）（担当: Codex）
+- [x] M2: 検索/フィルタ/ソート + スキーマ検証（AJV）（担当: Claude）
 - [ ] M3: 使い勝手調整（ショートカット任意/軽微な性能調整）（担当: Codex）
 
 ## 実装タスク（Claude・作業順）
@@ -165,9 +165,9 @@
 ### M2 — 検索/フィルタ/ソート + AJV
 - [x] 検索・フィルタの最小実装（状態/score/source_type/unknown 抽出）（担当: Claude）
 - [ ] ソート（会社名/score/更新日時のうち最低1種 + 既定順）（担当: Claude）
-- [ ] AJV 初期化: `public/schemas/review.schema.json` を参照、`ajv-formats` 追加（担当: Claude）
-- [ ] 検証フック: 読込時/保存前にスキーマ検証を実施（担当: Claude）
-- [ ] エラーバナー: 件数＋先頭5件の要約表示、詳細は `console.error`（担当: Claude）
+- [x] AJV 初期化: `public/schemas/review.schema.json` を参照、`ajv-formats` 追加（担当: Claude）
+- [x] 検証フック: 読込時/保存前にスキーマ検証を実施（担当: Claude）
+- [x] エラーバナー: 件数＋先頭5件の要約表示、詳細は `console.error`（担当: Claude）
 
 ### M3 — 使い勝手調整（任意）
 - [ ] ローディング/エンプティ/エラーの表示整理（担当: Claude）

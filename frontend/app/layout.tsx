@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { ReviewProvider } from '@/contexts/ReviewContext'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={inter.className}>
-        {children}
+        <ReviewProvider>
+          {children}
+        </ReviewProvider>
       </body>
     </html>
   )

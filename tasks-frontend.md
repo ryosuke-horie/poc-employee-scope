@@ -15,8 +15,8 @@
 - [x] AJV によるスキーマ検証の導入（担当: Claude）
   
 ### TODO（実装ガイド）
-- [x] ページ構成: `/` 一覧、`/company/[id]` 詳細（担当: Codex）
-- [x] コンポーネント粒度: EvidenceCard/DecisionControls/Filters/Toolbar（担当: Codex）
+- [x] ページ構成: `/` 一覧、`/company/[id]` 詳細（担当: Codex/Claude）
+- [x] コンポーネント粒度: EvidenceCard/DecisionControls/Filters/Toolbar（担当: Codex/Claude）
 - [x] スタイル: Tailwind基調、ダークモード任意（将来）（担当: Claude）
 
 ## TODO（ユースケース）
@@ -32,10 +32,10 @@
 - [x] 詳細: 証跡カード（URL/タイトル/抜粋/score/source_type/取得日時/方法/HTTP ステータス）（仕様: Codex、実装: Claude）
 - [x] 詳細: 決定入力（decision/override_value/note）（仕様: Codex、実装: Claude）
 - [-] 共通: 未保存ガード（最小フェーズでは除外）（仕様: Codex）
-- [ ] 共通: ツールバー（保存のみ。ダウンロード/インポートは除外）（仕様: Codex、実装: Claude）
+- [x] 共通: ツールバー（保存のみ。ダウンロード/インポートは除外）（仕様: Codex、実装: Claude）
   
 ### TODO（フィルタ仕様・並び替え詳細）
-- [x] 状態フィルタ: ok/ng/unknown/未判定のみ（複数選択可・デフォルト=全て）（担当: Codex）
+- [x] 状態フィルタ: ok/ng/unknown/未判定のみ（複数選択可・デフォルト=全て）（担当: Claude）
 - [x] scoreフィルタ: 下限/上限スライダー（0.0〜1.0、刻み0.05、デフォルト=全域）（担当: Codex）
 - [x] source_type: チェックボックス群（official/ir/pdf/gov/wiki/news/agg/web/api/manual）（担当: Codex）
 - [x] 方法フィルタ: extraction_method（regex/llm/failed）（担当: Codex）
@@ -52,12 +52,12 @@
 - [x] 読み込み経路: `public/review.json`（静的ファイル）（担当: Codex）
 - [x] バリデーション: `ajv` によるスキーマ検証（エラー可視化）（担当: Claude）
 - [x] ローカル保存: 保存ボタンで `localStorage` に書き込み（自動保存なし）（担当: Claude）
-- [ ] 復元: 初期ロード時に `localStorage` を読み込み（キーがあれば）（担当: Claude）
+- [x] 復元: 初期ロード時に `localStorage` を読み込み（キーがあれば）（担当: Claude）
   
 ### TODO（データマッピング・整合性）
 - [x] UIモデル←→スキーマのマッピング表を作成（company/evidence/review_state）（担当: Codex）
 - [ ] null/未定義の扱いを定義（override_value/note/score等）（担当: Codex）
-- [ ] evidenceの最新/代表選定ロジック（score降順/時刻/優先source_type）（仕様: Codex、実装: Claude）
+- [x] evidenceの最新/代表選定ロジック（score降順/時刻/優先source_type）（仕様: Codex、実装: Claude）
 - [x] `decided_at` は保存時にクライアントで付与（ISO 8601）（仕様: Codex、実装: Claude）
 
 ### TODO（AJV 導入の最小要件）
@@ -80,8 +80,8 @@
   - [x] エラーバナー表示コンポーネント（簡易版）の実装。
 
 ## TODO（機能）
-- [ ] 検索/フィルタ/ソート（URLクエリ共有は任意）（担当: Claude）
-- [ ] 編集（decision/override_value/note）と 1 段階の Undo は任意（最小では省略可）（担当: Claude）
+- [x] 検索/フィルタ/ソート（URLクエリ共有は任意）（担当: Claude）
+- [x] 編集（decision/override_value/note）と 1 段階の Undo は任意（最小では省略可）（担当: Claude）
 - [x] 保存時に `review_state` を更新し `decided_at` を ISO 8601 付与（担当: Claude）
 - [-] エクスポート: レビュー済みのみ CSV（本フェーズでは削除）
 - [ ] 差分ハイライト（任意、直前 bundle との比較）（担当: Claude）
@@ -112,8 +112,8 @@
 - [x] UI レビュー→保存（localStorage へ保存）（担当: ユーザー／Claude）
 
 ## TODO（受入基準）
-- [x] スキーマ適合（読込/保存時にAJV合格）（担当: Codex）
-- [ ] 基本フロー（一覧/詳細/編集/保存）がローカルで完結（担当: Codex）
+- [x] スキーマ適合（読込/保存時にAJV合格）（担当: Claude）
+- [x] 基本フロー（一覧/詳細/編集/保存）がローカルで完結（担当: Claude）
   
 ### 受入シナリオ（詳細）
 - [ ] サンプル `review.json`（10社/100evidence相当）で一覧が2秒以内に描画（担当: Codex）
@@ -121,22 +121,22 @@
 - [ ] 詳細で decision=ok + override=1234 + note 入力→保存→一覧・詳細に反映（担当: Codex）
 
 ## TODO（マイルストーン）
-- [ ] M1: 静的読込 + 一覧/詳細表示 + ローカル保存（JSONダウンロード無し）（担当: Codex）
+- [x] M1: 静的読込 + 一覧/詳細表示 + ローカル保存（JSONダウンロード無し）（担当: Claude）
 - [ ] M2: 検索/フィルタ/ソート + スキーマ検証（AJV）（担当: Codex）
 - [ ] M3: 使い勝手調整（ショートカット任意/軽微な性能調整）（担当: Codex）
 
 ## 実装タスク（Claude・作業順）
 
 ### M1 — 基本表示とローカル保存
-- [ ] ルーティング最小構成: `/` と `/company/[id]` を作成（担当: Claude）
-- [ ] 状態管理: React Context + useReducer の骨格（型/初期状態/アクション）を実装（担当: Claude）
-- [ ] データ読込: `public/review.json` を fetch → 状態へ取り込み（担当: Claude）
-- [ ] 一覧ビュー: 企業サマリ＋現在の決定を表示（担当: Claude）
-- [ ] 詳細ビュー: EvidenceCard/DecisionControls で編集可能に（担当: Claude）
-- [ ] 保存: ツールバーの「保存」で `localStorage` に書込（キー: `review_state_v1`）、初期ロード時に復元（担当: Claude）
+- [x] ルーティング最小構成: `/` と `/company/[id]` を作成（担当: Claude）
+- [x] 状態管理: React Context + useReducer の骨格（型/初期状態/アクション）を実装（担当: Claude）
+- [x] データ読込: `public/review.json` を fetch → 状態へ取り込み（担当: Claude）
+- [x] 一覧ビュー: 企業サマリ＋現在の決定を表示（担当: Claude）
+- [x] 詳細ビュー: EvidenceCard/DecisionControls で編集可能に（担当: Claude）
+- [x] 保存: ツールバーの「保存」で `localStorage` に書込（キー: `review_state_v1`）、初期ロード時に復元（担当: Claude）
 
 ### M2 — 検索/フィルタ/ソート + AJV
-- [ ] 検索・フィルタの最小実装（状態/score/source_type/unknown 抽出）（担当: Claude）
+- [x] 検索・フィルタの最小実装（状態/score/source_type/unknown 抽出）（担当: Claude）
 - [ ] ソート（会社名/score/更新日時のうち最低1種 + 既定順）（担当: Claude）
 - [ ] AJV 初期化: `public/schemas/review.schema.json` を参照、`ajv-formats` 追加（担当: Claude）
 - [ ] 検証フック: 読込時/保存前にスキーマ検証を実施（担当: Claude）

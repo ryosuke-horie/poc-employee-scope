@@ -52,7 +52,10 @@
 - source_type: チェックボックス群（official/ir/pdf/gov/wiki/news/agg/web/api/manual）
 - extraction_method: チェック（regex/llm/failed）
 - 並び替え（任意）: 会社名（昇順）/score（降順）/更新日時（降順）のうち最低1種を実装。既定の優先度は「決定状態→score降順→更新日時降順」。
-- URL共有（任意）: 実装する場合、パラメータ命名は `q`（テキスト）、`state[]`（状態）、`score_min`/`score_max`、`source[]`、`method[]`、`sort`（name|score|updated）を予約。
+- URL共有: 詳細仕様・パラメータ命名は `docs/frontend/navigation-routing-spec.md` を参照（共有リンクの後方互換/安定化方針を含む）。
+
+## ナビゲーション/ルーティング
+- 一覧と詳細（`/` / `/company/[id]`）の状態維持・共有リンク・履歴操作については、`docs/frontend/navigation-routing-spec.md` に準拠する。
 
 ## 代表evidenceの選定（最小）
 - value != null の evidence を対象に、score 降順 → extracted_at 降順で 1 件採用。
